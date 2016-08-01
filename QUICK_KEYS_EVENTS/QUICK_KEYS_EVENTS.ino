@@ -16,6 +16,8 @@ Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
 bool change = false;
 bool pressed = false;
 
+char cha;
+
 void setup() {
   Serial.begin(9600);
   keypad.addEventListener(keypadEvent);
@@ -29,18 +31,24 @@ void loop() {
   }*/
   //KeyState state = keypad.getState();
   //Serial.println(KeyState(keypad.getState()));
+  if(KeyState(keypad.getState() == 2)) {
+    Serial.println(cha);
+    delay(50);
+  }
 }
 
 void keypadEvent(KeypadEvent key) {
   switch (KeyState(keypad.getState())) {  
     case PRESSED:
       Serial.println(key);
+      cha = key;
 
-    //case RELEASED:
+    case RELEASED:
       //pass
-      //pressed = false;
-
+      pressed = false;
+      
     //case HOLD:
+      //pressed = true;
       //while(KeyState(keypad.getState()) == 2) {
       //  Serial.println(key);
       //}
