@@ -20,6 +20,8 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 from kivy.uix.dropdown import DropDown
+from kivy.uix.textinput import TextInput
+from kivy.uix.popup import Popup
 
 k = PyKeyboard()																	#creates an instance of pykeyboard
 																					#dictonary of symbols
@@ -40,16 +42,19 @@ widspacey = 1/(rows+1)
 widspacex = 1/cols
 		   
 btn = []																			#create a list for button variables
+popup = []																			#and one for the corresponding pop ups
 for i in range(len(symbols)):														#and fill it with blank spaces
 	btn.append('')
-	
+	popup.append('')
+
 widspaces = []																		#create list for pos_hints
 for y in range(rows, 0, -1):														#and fill it realtive to
 	for x in range(cols):															#amount of buttons
 		widspaces.append({'x' : widspacex*x, 'y' : widspacey*y})
 #print widspaces[5]
 
-ser = serial.Serial('/dev/ttyACM0')													#the port the arduino is connected to
+#ser = serial.Serial('/dev/ttyACM0')													#the port the arduino is connected to
+ser = ''													
 serports = []
 	
 def serial_ports():
@@ -94,32 +99,47 @@ def addbutton(text, size_hint, pos_hint, bind, parent):
 	parent.add_widget(button)
 	return button
 
+class AddSymbol(App):
+	def build(self):
+		#Window.size = (100, 200)
+		parent = GridLayout(rows = 2)
+		textinput = TextInput(text = 'Hello world',size_hint = (1, .5), multiline = False)
+		parent.add_widget(textinput)
+		#test = addbutton('test', (.5, .5), {'x' : 0, 'y' : .5}, callback, parent)
+		confirm = addbutton('confirm', (1, .5), {'x' : 0, 'y' : 0}, callback, parent)
+		#parent.add_widget(Button(text = 'hello'))
+		
+		return parent
+		
+		
 class MainWindow(App):
 	def build(self):
 		Window.size = (winheight, winwidth)
 		parent = FloatLayout()
-		parent.size = Window.size
+		#parent.size = Window.size
 		for i in range(len(symbols)):
 			#btn[i] = Button(text = symbols[str(i+1)], size_hint = (widspacex, widspacey), pos_hint = widspaces[i])
 			#btn[i].bind(on_press = callback)
 			#parent.add_widget(btn[i])
-			btn[i] = addbutton(symbols[str(i+1)], (widspacex, widspacey), widspaces[i], callback, parent)
+			popup[i] = Popup(title = 'replace ' + symbols[str(i + 1)] + ' with',
+							 content = TextInput(text = symbols[str(i+1)],
+							 multiline = False))
+			#print popup[i].content.text
+			popup[i].bind(on_dismiss = popup_callback) #newSymbol(str(i+1), popup[i].content.text))
+			btn[i] = addbutton(symbols[str(i+1)], (widspacex, widspacey), widspaces[i], popup[i].open, parent)
 		
 		serports = serial_ports()
-		print len(serports)
+		#print len(serports)
 		port = DropDown()
 		for i in range(len(serports)):
 			dropbtn = Button(text = serports[i], size_hint_y = None, height = 44)
 			dropbtn.bind(on_release = lambda dropbtn: port.select(dropbtn.text))
 			port.add_widget(dropbtn)
+			
 		portbtn = Button(text = 'port', size_hint = (2/3, widspacey), pos_hint = {'x' : 0, 'y' : 0})
 		portbtn.bind(on_release = port.open)
 		port.bind(on_select=lambda instance, x: setattr(portbtn, 'text', x))
 		parent.add_widget(portbtn)
-		#port = addbutton('port', (2/3, widspacey), {'x' : 0, 'y' : 0}, callback, parent)
-		#port = Button(text = 'port', size_hint = (2/3, widspacey), pos_hint = {'x' : 0, 'y' : 0})
-		#port.bind(on_press = callback)
-		#parent.add_widget(port)
 		applybtn = addbutton('apply', (1/3, widspacey), {'x' : 2/3, 'y' : 0}, callback, parent)
 		#applybtn = Button(text = 'apply', size_hint = (1/3, widspacey), pos_hint = {'x' : 2/3, 'y' : 0})
 		#applybtn.bind(on_press = callback)
@@ -127,7 +147,7 @@ class MainWindow(App):
 		return parent
 
 def symbolDecoder():
-	while True:																			#main loop
+	while ser != '':																			#main loop
 		while ser.readline().decode('utf-8')[:2]:										#when there is a relevant serial value
 			try:																		#try to run the main script
 				ind = ser.read()
@@ -146,10 +166,18 @@ def symbolDecoder():
 			except:																		#if there is an error
 				pass																	#do not do anything
 
+def popup_callback(instance):
+	#print instance.title[8:-5]
+	key = symbols.keys()[symbols.values().index(instance.title[8:-5])]
+	symbols[key] = instance.content.text
+	#print symbols
+	instance.title = 'replace ' + symbols[key] + ' with'
+	btn[int(key)-1].text = symbols[key]
 
 
 if __name__ == '__main__':
-	print serports
+	#print serports
 	t = threading.Thread(target = symbolDecoder)
 	t.start()
 	MainWindow().run()
+	#AddSymbol().run()
