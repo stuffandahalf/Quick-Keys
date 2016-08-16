@@ -40,7 +40,7 @@ winwidth = 200
 
 widspacey = 1/(rows+1)
 widspacex = 1/cols
-		   
+
 btn = []																			#create a list for button variables
 popup = []																			#and one for the corresponding pop ups
 for i in range(len(symbols)):														#and fill it with blank spaces
@@ -140,7 +140,7 @@ class MainWindow(App):
 		portbtn.bind(on_release = port.open)
 		port.bind(on_select=lambda instance, x: setattr(portbtn, 'text', x))
 		parent.add_widget(portbtn)
-		applybtn = addbutton('apply', (1/3, widspacey), {'x' : 2/3, 'y' : 0}, callback, parent)
+		applybtn = addbutton('save', (1/3, widspacey), {'x' : 2/3, 'y' : 0}, callback, parent)
 		#applybtn = Button(text = 'apply', size_hint = (1/3, widspacey), pos_hint = {'x' : 2/3, 'y' : 0})
 		#applybtn.bind(on_press = callback)
 		#parent.add_widget(applybtn)
