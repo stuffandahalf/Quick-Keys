@@ -159,7 +159,10 @@ def symbolDecoder():
 					k.release_key('Control_L')
 					#k.tap_key('Return')
 				elif platform.system() == 'Darwin':
-					pass
+					k.press_key('Command')
+                    k.tap_key('v')
+                    k.release_key('Command')
+                    #pass
 				time.sleep(.1)															#pause for .1 seconds
 				clipboard.copy(board)													#restore the clipboard contents
 							

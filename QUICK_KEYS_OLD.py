@@ -15,7 +15,8 @@ symbols = {'1' : u'π',
 		   '5' : 'me too thanks',
 		   '6' : 'FeelsBindMan'}
 		   
-ser = serial.Serial('/dev/ttyACM0')													#the port the arduino is connected to
+#ser = serial.Serial('/dev/ttyACM0')													#the port the arduino is connected to
+ser = serial.Serial('/dev/tty.usbmodem1A21')
 
 while True:																			#main loop
 	#print ser.read()
@@ -33,7 +34,10 @@ while True:																			#main loop
 				k.release_key('Control_L')
 				#k.tap_key('Return')
 			elif platform.system() == 'Darwin':
-				pass
+				k.press_key('Command')
+				k.tap_key('v')
+				k.release_key('Command')
+				#pass
 			time.sleep(.1)															#pause for .1 seconds
 			clipboard.copy(board)													#restore the clipboard contents
 						
