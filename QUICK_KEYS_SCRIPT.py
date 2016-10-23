@@ -16,7 +16,8 @@ symbols = {'1' : u'π',
 		   '6' : 'FeelsBindMan'}
 		   
 #ser = serial.Serial('/dev/ttyACM0')													#the port the arduino is connected to
-ser = serial.Serial('/dev/tty.usbmodem1A21')
+ser = serial.Serial('/dev/ttyUSB0')
+#ser = serial.Serial('/dev/tty.usbmodem1A21')
 
 while True:																			#main loop
 	#print ser.read()
