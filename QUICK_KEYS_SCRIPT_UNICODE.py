@@ -4,7 +4,6 @@ import serial																		#importing main program modules
 import platform
 import time
 from pykeyboard import PyKeyboard
-import clipboard
 
 k = PyKeyboard()																	#creates an instance of pykeyboard
 																					#dictonary of symbols
@@ -25,7 +24,7 @@ while True:
             ind = ser.read()
             #print ind
             hexval = symbols[ind].encode("unicode_escape")
-            #print hexval
+            print hexval
             if hexval[:2] == '\u':
                 if platform.system() == 'Linux':
                     k.press_key('Control_L')
@@ -36,6 +35,16 @@ while True:
                     hexval = hexval[2:]
                     k.type_string(hexval)
                     k.tap_key('Return')
+                    
+                elif platform.system() == 'Windows':
+                    pass
+                    
+                elif platform.system() == 'Darwin':
+                    pass
+                
+                else:
+                    print 'Unsupported platform'
+                    
             else:
                 k.type_string(hexval)
             
