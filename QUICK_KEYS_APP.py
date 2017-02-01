@@ -54,7 +54,8 @@ for y in range(rows, 0, -1):														#and fill it realtive to
 #print widspaces[5]
 
 #ser = serial.Serial('/dev/ttyACM0')													#the port the arduino is connected to
-ser = ''													
+#ser = ''
+ser = serial.Serial('/dev/ttyUSB0')													
 serports = []
 	
 def serial_ports():
