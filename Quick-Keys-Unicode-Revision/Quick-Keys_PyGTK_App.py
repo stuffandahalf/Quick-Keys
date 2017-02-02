@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#  Quick-Keys_PyGTK_App.py
+#Source: Quick-Keys_PyGTK_App.py
 
 #importing main program modules
 import threading
@@ -18,7 +18,12 @@ import gtk
 k = PyKeyboard()
 
 window_height = 300
-window_width = 300
+window_width = 313
+
+pref_file = 'Quick-Keys Preferences'
+
+rows = 2
+columns = 3
 
 #dictionary of symbols corresponding to the arduino
 symbols = {'1' : 'π',
@@ -28,9 +33,12 @@ symbols = {'1' : 'π',
            '5' : 'Δ',
            '6' : 'Ω'}
 
-for x in rows:
-    for y in columns:
-        coords[x+1*y+1] = 
+coords = []
+for x in range(rows):
+    for y in range(columns):
+        coords.append([(window_height/rows+1)*x+1, (window_width/columns)*y+1])
+        
+print coords
 
 def main_script():
     while True:
@@ -65,6 +73,18 @@ def main_script():
                 
             except:
                 pass
+                
+def save_preferences():
+    f = open(pref_file, 'w+')
+    for i in symbols:
+        f.write(symbols[i] + '\n')
+    f.write(ser + '\n')
+    
+def read_preferences():
+    f = open(pref_file)
+    for i in symbols:
+        symbols[i] = f.readline()[:2]
+    ser = f.readline()[:2]
 
 class Base:
     def __init__(self):
@@ -80,7 +100,7 @@ class Base:
             entry = gtk.Entry()                                         # make a text box
             entry.set_max_length(10)                                    # set the max length a symbol can be to 10
             entry.set_text(symbols[str(i)])                             # set the default text in the box to the current symbol
-            layout.put(entry, 300/6*int(i)+1, 300/6*int(i)+1)           # place the text box on the layout
+            layout.put(entry, coords[int(i)-1][0], coords[int(i)-1][1])           # place the text box on the layout
             entry.show()                                                # 
     
     def main(self):
@@ -102,6 +122,8 @@ if __name__ == '__main__':
     except:
         ser = ''
         print 'Serial port not found, please set later'
-    
+    #save_preferences()
+    read_preferences()
+    print ser
     main_window = Base()                                                # create a window object
     main_window.main()                                                  # run the object
