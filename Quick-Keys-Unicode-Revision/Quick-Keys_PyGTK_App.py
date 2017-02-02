@@ -8,6 +8,8 @@ import threading
 import serial
 import platform
 import time
+import sys
+import glob
 from pykeyboard import PyKeyboard
 
 #importing gui components
@@ -74,6 +76,34 @@ def main_script():
             except:
                 pass
                 
+def serial_ports():
+    """ Lists serial port names
+
+        :raises EnvironmentError:
+            On unsupported or unknown platforms
+        :returns:
+            A list of the serial ports available on the system
+    """
+    if sys.platform.startswith('win'):
+        ports = ['COM%s' % (i + 1) for i in range(256)]
+    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+        # this excludes your current terminal "/dev/tty"
+        ports = glob.glob('/dev/tty[A-Za-z]*')
+    elif sys.platform.startswith('darwin'):
+        ports = glob.glob('/dev/tty.*')
+    else:
+        raise EnvironmentError('Unsupported platform')
+
+    result = []
+    for port in ports:
+        try:
+            s = serial.Serial(port)
+            s.close()
+            result.append(port)
+        except (OSError, serial.SerialException):
+            pass
+    return result
+    
 def save_preferences():
     f = open(pref_file, 'w+')
     for i in symbols:
@@ -85,6 +115,8 @@ def read_preferences():
     for i in symbols:
         symbols[i] = f.readline()[:2]
     ser = f.readline()[:2]
+
+
 
 class Base:
     def __init__(self):
@@ -100,8 +132,11 @@ class Base:
             entry = gtk.Entry()                                         # make a text box
             entry.set_max_length(10)                                    # set the max length a symbol can be to 10
             entry.set_text(symbols[str(i)])                             # set the default text in the box to the current symbol
-            layout.put(entry, coords[int(i)-1][0], coords[int(i)-1][1])           # place the text box on the layout
+            layout.put(entry, coords[int(i)-1][0], coords[int(i)-1][1]) # place the text box on the layout
             entry.show()                                                # 
+    
+        drop = gtk.combo_box_new_text()
+        layout.put(drop, 250, 50)
     
     def main(self):
         gtk.main()
@@ -122,8 +157,8 @@ if __name__ == '__main__':
     except:
         ser = ''
         print 'Serial port not found, please set later'
-    #save_preferences()
-    read_preferences()
-    print ser
+    
+    ports = serial_ports()
+    print ports
     main_window = Base()                                                # create a window object
     main_window.main()                                                  # run the object
