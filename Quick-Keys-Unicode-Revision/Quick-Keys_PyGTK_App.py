@@ -29,7 +29,7 @@ pref_file = 'Quick-Keys Preferences'
 rows = 2
 columns = 3
 
-##dictionary of symbols corresponding to the arduino
+#dictionary of symbols corresponding to the arduino
 symbols = {'1' : 'π',
            '2' : 'Σ',
            '3' : 'α',
@@ -246,8 +246,7 @@ if __name__ == '__main__':
     else:
         save_preferences()
         print 'Preference file saved'
-    if ser != '':
-        t1.start()
+    t1.start()
         
     main_window = Base()                                                # create a window object
     main_window.main()                                                  # run the object
