@@ -104,7 +104,7 @@ def serial_ports():
             pass
     return result
     
-def save_preferences():
+def save_preferences(pref_file):
     f = open(pref_file, 'w+')
     for i in symbols:
         f.write(symbols[i] + '\n')
@@ -113,22 +113,24 @@ def save_preferences():
     except:
         f.write(ser + '\n')
     
-def read_preferences():
+def read_preferences(pref_file):
+    global ser
     f = open(pref_file)
     for i in symbols:
         symbols[i] = f.readline().rstrip('\r\n')
     port = f.readline().rstrip('\r\n')
     try:
         ser = serial.Serial(port)
-        print ser.port
     except:
         print 'Error setting serial port. Try again later.'
         ser = ''
-    
 
 def apply_changes(widget, data = None):
     print 'function to apply changes'
-    read_preferences()
+    for i in new_symbols:
+        symbols[i] = new_symbols[i]
+    print data
+    #ser = 
 
 class Base:
     def __init__(self):
@@ -144,8 +146,11 @@ class Base:
         layout.show()
         
         self.add_primary_buttons(layout)
-        self.add_serial_port_dropdown(layout)
-        self.add_apply_button(layout)
+        
+        ser_drop = gtk.combo_box_new_text()
+        self.add_serial_port_dropdown(layout, ser_drop)
+        self.add_apply_button(layout, ser_drop)
+        self.add_reset_load_buttons(layout)
     
     def add_primary_buttons(self, layout):
         button_size = (window_width/columns, window_height/(rows+1))
@@ -161,9 +166,8 @@ class Base:
             layout.put(button, button_coords[i][0], button_coords[i][1])
             button.show()
 
-    def add_serial_port_dropdown(self, layout):
-        drop = gtk.combo_box_new_text()
-        drop_size = (window_width/columns*2, window_height/(rows+1))
+    def add_serial_port_dropdown(self, layout, drop):
+        drop_size = (window_width/3*2, window_height/(rows+1)/2)
         drop.set_size_request(drop_size[0], drop_size[1])
         ports = serial_ports()
         for i in ports:
@@ -172,15 +176,29 @@ class Base:
         layout.put(drop, drop_coords[0], drop_coords[1])
         drop.show()
     
-    def add_apply_button(self, layout):
-        button_size = (window_width/columns, window_height/(rows+1))
+    def add_apply_button(self, layout, drop):
+        button_size = (window_width/3, window_height/(rows+1))
         button = gtk.Button(label = 'apply')
         button.set_size_request(button_size[0], button_size[1])
         button_coord = (button_size[0]*(columns-1), button_size[1]*(rows))
-        button.connect('clicked', apply_changes, '')
+        button.connect('clicked', apply_changes, drop.get_active_text())
         
         layout.put(button, button_coord[0], button_coord[1])
         button.show()
+    
+    def add_reset_load_buttons(self, layout):
+        button_size = (window_width/3, window_height/(rows+1)/2)
+        reset = gtk.Button(label = 'reset')
+        reset.set_size_request(button_size[0], button_size[1])
+        button_coord = (0, button_size[1]*(rows*2+1))
+        layout.put(reset, button_coord[0], button_coord[1])
+        reset.show()
+        
+        load = gtk.Button(label = 'load')
+        load.set_size_request(button_size[0], button_size[1])
+        button_coord = (window_width/3, button_size[1]*(rows*2+1))
+        layout.put(load, button_coord[0], button_coord[1])
+        load.show()
     
     def main(self):
         gtk.main()
@@ -204,17 +222,15 @@ if __name__ == '__main__':
         #print 'Serial port not found, please set later'
     
     #check if preferences file exists
-    print symbols
-    print ser
     if os.path.isfile(pref_file):
-        read_preferences()
+        read_preferences(pref_file)
         
     else:
-        save_preferences()
+        save_preferences(pref_file)
         print 'Preference file saved'
-        
-    #print symbols
     print ser.port
+    if ser != '':
+        t1.start()
         
     main_window = Base()                                                # create a window object
     main_window.main()                                                  # run the object
