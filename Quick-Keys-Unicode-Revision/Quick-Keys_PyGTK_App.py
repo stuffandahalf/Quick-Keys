@@ -58,8 +58,9 @@ for i in symbols:
 
 def main_script():
     while True:
-        while ser.readline().decode('utf-8')[:2]:
-            try:
+        try:
+            while ser.readline().decode('utf-8')[:2]:
+            #try:
                 ind = ser.read()
                 #print ind
                 hexval = symbols[ind].encode("unicode_escape")
@@ -87,8 +88,8 @@ def main_script():
                 else:
                     k.type_string(hexval)
                 
-            except:
-                pass
+        except:
+            pass
                 
 def serial_ports():
     """ Lists serial port names
