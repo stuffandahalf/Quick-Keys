@@ -118,7 +118,7 @@ def serial_ports():
             pass
     return result
     
-def save_preferences(pref_file):
+def save_preferences():
     f = open(pref_file, 'w+')
     for i in symbols:
         f.write(symbols[i] + '\n')
@@ -127,7 +127,7 @@ def save_preferences(pref_file):
     except:
         f.write(ser + '\n')
     
-def read_preferences(pref_file):
+def read_preferences():
     global ser
     f = open(pref_file)
     for i in symbols:
@@ -138,6 +138,9 @@ def read_preferences(pref_file):
     except:
         print 'Error setting serial port. Try again later.'
         ser = ''
+
+def read_preferences_bind(widget, data = None):
+    read_preferences()
 
 def apply_changes(widget, data = None):
     print 'function to apply changes'
@@ -210,6 +213,7 @@ class Base:
         load = gtk.Button(label = 'load')
         load.set_size_request(button_size[0], button_size[1])
         button_coord = (window_width/3, window_height-button_size[1])
+        load.connect('clicked', read_preferences_bind, '')
         layout.put(load, button_coord[0], button_coord[1])
         load.show()
     
@@ -236,10 +240,10 @@ if __name__ == '__main__':
     
     #check if preferences file exists
     if os.path.isfile(pref_file):
-        read_preferences(pref_file)
+        read_preferences()
         
     else:
-        save_preferences(pref_file)
+        save_preferences()
         print 'Preference file saved'
     if ser != '':
         t1.start()
