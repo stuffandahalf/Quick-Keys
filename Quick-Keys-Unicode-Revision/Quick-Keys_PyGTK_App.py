@@ -29,13 +29,27 @@ pref_file = 'Quick-Keys Preferences'
 rows = 2
 columns = 3
 
-#dictionary of symbols corresponding to the arduino
+##dictionary of symbols corresponding to the arduino
 symbols = {'1' : 'π',
            '2' : 'Σ',
            '3' : 'α',
            '4' : 'β',
            '5' : 'Δ',
            '6' : 'Ω'}
+           
+#symbols = {'1' : 'π',
+           #'2' : 'Σ',
+           #'3' : 'α',
+           #'4' : 'β',
+           #'5' : 'Δ',
+           #'6' : 'Ω',
+           #'7' : 'test',
+           #'8' : 'another',
+           #'9' : 'and again',
+           #'10' : 'last one',
+           #'11' : 'ayy',
+           #'12' : 'lmao'}
+
 
 #a dictionary to store the changed symbols
 new_symbols = {}
@@ -155,8 +169,8 @@ class Base:
     def add_primary_buttons(self, layout):
         button_size = (window_width/columns, window_height/(rows+1))
         button_coords = []
-        for x in range(columns):
-            for y in range(rows):
+        for y in range(rows):
+            for x in range(columns):
                 button_coords.append((button_size[0]*x, button_size[1]*y))
         
         for i in range(len(symbols)):
@@ -180,9 +194,8 @@ class Base:
         button_size = (window_width/3, window_height/(rows+1))
         button = gtk.Button(label = 'apply')
         button.set_size_request(button_size[0], button_size[1])
-        button_coord = (button_size[0]*(columns-1), button_size[1]*(rows))
+        button_coord = (window_width-button_size[0], button_size[1]*(rows))
         button.connect('clicked', apply_changes, drop.get_active_text())
-        
         layout.put(button, button_coord[0], button_coord[1])
         button.show()
     
@@ -191,12 +204,12 @@ class Base:
         reset = gtk.Button(label = 'reset')
         reset.set_size_request(button_size[0], button_size[1])
         button_coord = (0, button_size[1]*(rows*2+1))
-        layout.put(reset, button_coord[0], button_coord[1])
+        layout.put(reset, button_coord[0], window_height-button_size[1])
         reset.show()
         
         load = gtk.Button(label = 'load')
         load.set_size_request(button_size[0], button_size[1])
-        button_coord = (window_width/3, button_size[1]*(rows*2+1))
+        button_coord = (window_width/3, window_height-button_size[1])
         layout.put(load, button_coord[0], button_coord[1])
         load.show()
     
@@ -228,7 +241,6 @@ if __name__ == '__main__':
     else:
         save_preferences(pref_file)
         print 'Preference file saved'
-    print ser.port
     if ser != '':
         t1.start()
         
