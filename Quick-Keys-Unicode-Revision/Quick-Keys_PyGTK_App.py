@@ -19,7 +19,7 @@ pygtk.require('2.0')
 import gtk
 
 k = PyKeyboard()
-ser = ''
+ser = serial.Serial()#port = None)
 
 window_height = 300
 window_width = 300
@@ -57,40 +57,50 @@ for i in symbols:
     new_symbols[i] = symbols[i]
 
 def main_script():
+    #global ser
     while True:
-        try:
-            while ser.readline().decode('utf-8')[:2]:
-            #try:
-                ind = ser.read()
-                #print ind
-                hexval = symbols[ind].encode("unicode_escape")
-                print hexval
-                if hexval[:2] == '\u':
-                    if platform.system() == 'Linux':
-                        k.press_key('Control_L')
-                        k.press_key('Shift_L')
-                        k.tap_key('u')
-                        k.release_key('Control_L')
-                        k.release_key('Shift_L')
-                        hexval = hexval[2:]
-                        k.type_string(hexval)
-                        k.tap_key('Return')
+        #print ser.port
+        if ser.port != None:
+            try:
+                while ser.readline().decode('utf-8')[:2]:
+                #try:
+                    ind = ser.read()
+                    #print ind
+                    hexval = symbols[ind].encode("unicode_escape")
+                    print hexval
+                    if hexval[:2] == '\u':
+                        if platform.system() == 'Linux':
+                            k.press_key('Control_L')
+                            k.press_key('Shift_L')
+                            k.tap_key('u')
+                            k.release_key('Control_L')
+                            k.release_key('Shift_L')
+                            hexval = hexval[2:]
+                            k.type_string(hexval)
+                            k.tap_key('Return')
+                            
+                        elif platform.system() == 'Windows':
+                            pass
+                            
+                        elif platform.system() == 'Darwin':
+                            pass
                         
-                    elif platform.system() == 'Windows':
-                        pass
-                        
-                    elif platform.system() == 'Darwin':
-                        pass
-                    
+                        else:
+                            print 'Unsupported platform'
+                            
                     else:
-                        print 'Unsupported platform'
-                        
-                else:
-                    k.type_string(hexval)
-                
-        except:
-            pass
-                
+                        k.type_string(hexval)
+            
+            except:# serial.SerialException as e:
+                ser.close()
+                ser.port = None# = serial.Serial(None)
+                print 'disconnected'
+                #try:
+                    #ser.port.close()
+                #except:
+                    #ser.port.close()
+                    #print 'disconnected'
+                    
 def serial_ports():
     """ Lists serial port names
 
@@ -136,9 +146,10 @@ def read_preferences():
     port = f.readline().rstrip('\r\n')
     try:
         ser = serial.Serial(port)
+        print 'Serial port is set to ' + ser.port
     except:
         print 'Error setting serial port. Try again later.'
-        ser = ''
+        ser = serial.Serial()#port = None)
 
 def read_preferences_bind(widget, data = None):
     read_preferences()
@@ -246,7 +257,8 @@ if __name__ == '__main__':
     else:
         save_preferences()
         print 'Preference file saved'
+    
     t1.start()
-        
+    
     main_window = Base()                                                # create a window object
     main_window.main()                                                  # run the object
