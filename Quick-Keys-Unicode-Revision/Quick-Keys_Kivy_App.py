@@ -115,6 +115,7 @@ class AddSymbol(App):
 class MainWindow(App):
     def build(self):
         self.title = 'Quick-Keys'
+        self.icon = '1479186122476.png'
         Window.size = (winheight, winwidth)
         parent = FloatLayout()
         #parent.size = Window.size
@@ -194,6 +195,7 @@ def popup_callback(instance):
 
 if __name__ == '__main__':
     #print serports
+    #print icon.filename
     t = threading.Thread(target = symbolDecoder)
     t.start()
     MainWindow().run()

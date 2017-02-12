@@ -10,6 +10,7 @@ import platform
 import time
 import sys
 import glob
+import os.path
 from pykeyboard import PyKeyboard
 
 #importing gui components
@@ -18,9 +19,10 @@ pygtk.require('2.0')
 import gtk
 
 k = PyKeyboard()
+ser = ''
 
 window_height = 300
-window_width = 313
+window_width = 300
 
 pref_file = 'Quick-Keys Preferences'
 
@@ -35,12 +37,10 @@ symbols = {'1' : 'π',
            '5' : 'Δ',
            '6' : 'Ω'}
 
-coords = []
-for x in range(rows):
-    for y in range(columns):
-        coords.append([(window_height/rows+1)*x+1, (window_width/columns)*y+1])
-        
-print coords
+#a dictionary to store the changed symbols
+new_symbols = {}
+for i in symbols:
+    new_symbols[i] = symbols[i]
 
 def main_script():
     while True:
@@ -108,57 +108,113 @@ def save_preferences():
     f = open(pref_file, 'w+')
     for i in symbols:
         f.write(symbols[i] + '\n')
-    f.write(ser + '\n')
+    try:
+        f.write(ser.port + '\n')
+    except:
+        f.write(ser + '\n')
     
 def read_preferences():
     f = open(pref_file)
     for i in symbols:
-        symbols[i] = f.readline()[:2]
-    ser = f.readline()[:2]
+        symbols[i] = f.readline().rstrip('\r\n')
+    port = f.readline().rstrip('\r\n')
+    try:
+        ser = serial.Serial(port)
+        print ser.port
+    except:
+        print 'Error setting serial port. Try again later.'
+        ser = ''
+    
 
-
+def apply_changes(widget, data = None):
+    print 'function to apply changes'
+    read_preferences()
 
 class Base:
     def __init__(self):
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.window.set_default_size(window_width, window_height)
+        self.window.set_size_request(window_width, window_height)
         self.window.show()
+        self.window.set_title('Quick-Keys')
+        self.window.set_icon_from_file('icon.png')
         
         layout = gtk.Layout()
         self.window.add(layout)
         layout.show()
         
-        for i in symbols:                                               # for every symbol
-            entry = gtk.Entry()                                         # make a text box
-            entry.set_max_length(10)                                    # set the max length a symbol can be to 10
-            entry.set_text(symbols[str(i)])                             # set the default text in the box to the current symbol
-            layout.put(entry, coords[int(i)-1][0], coords[int(i)-1][1]) # place the text box on the layout
-            entry.show()                                                # 
+        self.add_primary_buttons(layout)
+        self.add_serial_port_dropdown(layout)
+        self.add_apply_button(layout)
     
+    def add_primary_buttons(self, layout):
+        button_size = (window_width/columns, window_height/(rows+1))
+        button_coords = []
+        for x in range(columns):
+            for y in range(rows):
+                button_coords.append((button_size[0]*x, button_size[1]*y))
+        
+        for i in range(len(symbols)):
+            button = gtk.Button(label = symbols[str(i+1)])
+            button.set_size_request(button_size[0], button_size[1])
+            
+            layout.put(button, button_coords[i][0], button_coords[i][1])
+            button.show()
+
+    def add_serial_port_dropdown(self, layout):
         drop = gtk.combo_box_new_text()
-        layout.put(drop, 250, 50)
+        drop_size = (window_width/columns*2, window_height/(rows+1))
+        drop.set_size_request(drop_size[0], drop_size[1])
+        ports = serial_ports()
+        for i in ports:
+            drop.append_text(i)
+        drop_coords = (0, window_height/(rows+1)*rows)
+        layout.put(drop, drop_coords[0], drop_coords[1])
+        drop.show()
+    
+    def add_apply_button(self, layout):
+        button_size = (window_width/columns, window_height/(rows+1))
+        button = gtk.Button(label = 'apply')
+        button.set_size_request(button_size[0], button_size[1])
+        button_coord = (button_size[0]*(columns-1), button_size[1]*(rows))
+        button.connect('clicked', apply_changes, '')
+        
+        layout.put(button, button_coord[0], button_coord[1])
+        button.show()
     
     def main(self):
         gtk.main()
 
 if __name__ == '__main__':
+    
     gtk.threads_init()                                                  # initialize threads in gtk
     t1 = threading.Thread(target = main_script)                         # create a new thread for the main script
     
     #try to set the port of the arduino
-    try:
-        #ser = serial.Serial('/dev/ttyACM0')
-        ser = serial.Serial('/dev/ttyUSB0')
-        #ser = serial.Serial('/dev/tty.usbmodem1A21')
-        t1.start()                                                      # start the new thread
-        print 'Serial port set to ' + ser.port
+    #try:
+        ##ser = serial.Serial('/dev/ttyACM0')
+        #ser = serial.Serial('/dev/ttyUSB0')
+        ##ser = serial.Serial('/dev/tty.usbmodem1A21')
+        #t1.start()                                                      # start the new thread
+        #print 'Serial port set to ' + ser.port
         
-    #if none found, dont start thread
-    except:
-        ser = ''
-        print 'Serial port not found, please set later'
+    ##if none found, dont start thread
+    #except:
+        #ser = ''
+        #print 'Serial port not found, please set later'
     
-    ports = serial_ports()
-    print ports
+    #check if preferences file exists
+    print symbols
+    print ser
+    if os.path.isfile(pref_file):
+        read_preferences()
+        
+    else:
+        save_preferences()
+        print 'Preference file saved'
+        
+    #print symbols
+    print ser.port
+        
     main_window = Base()                                                # create a window object
     main_window.main()                                                  # run the object
