@@ -24,10 +24,10 @@ ser = serial.Serial()#port = None)
 window_height = 300
 window_width = 300
 
-pref_file = 'Quick-Keys Preferences'
-
 rows = 2
 columns = 3
+
+pref_file = 'Quick-Keys Preferences'
 
 #dictionary of symbols corresponding to the arduino
 symbols = {'1' : 'π',
@@ -59,11 +59,9 @@ for i in symbols:
 def main_script():
     #global ser
     while True:
-        #print ser.port
         if ser.port != None:
             try:
                 while ser.readline().decode('utf-8')[:2]:
-                #try:
                     ind = ser.read()
                     #print ind
                     hexval = symbols[ind].encode("unicode_escape")
@@ -91,15 +89,10 @@ def main_script():
                     else:
                         k.type_string(hexval)
             
-            except:# serial.SerialException as e:
+            except:
                 ser.close()
-                ser.port = None# = serial.Serial(None)
+                ser.port = None
                 print 'disconnected'
-                #try:
-                    #ser.port.close()
-                #except:
-                    #ser.port.close()
-                    #print 'disconnected'
                     
 def serial_ports():
     """ Lists serial port names
@@ -149,7 +142,7 @@ def read_preferences():
         print 'Serial port is set to ' + ser.port
     except:
         print 'Error setting serial port. Try again later.'
-        ser = serial.Serial()#port = None)
+        ser = serial.Serial()
 
 def read_preferences_bind(widget, data = None):
     read_preferences()
