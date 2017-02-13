@@ -139,7 +139,7 @@ def read_preferences():
     port = f.readline().rstrip('\r\n')
     try:
         ser = serial.Serial(port)
-        print 'Serial port is set to ' + ser.port
+        print_serial_change()
     except:
         print 'Error setting serial port. Try again later.'
         ser = serial.Serial()
@@ -147,12 +147,13 @@ def read_preferences():
 def read_preferences_bind(widget, data = None):
     read_preferences()
 
-def apply_changes(widget, data = None):
-    print 'function to apply changes'
-    for i in new_symbols:
-        symbols[i] = new_symbols[i]
-    print data
-    #ser = 
+def print_serial_change():
+    print 'Serial port has been set to ' + ser.port
+    
+def print_symbol_changes():
+    print 'Symbols have been changed to: '
+    for i in symbols:
+        print symbols[i]
 
 class Base:
     def __init__(self):
@@ -168,10 +169,8 @@ class Base:
         layout.show()
         
         self.add_primary_buttons(layout)
-        
-        ser_drop = gtk.combo_box_new_text()
-        self.add_serial_port_dropdown(layout, ser_drop)
-        self.add_apply_button(layout, ser_drop)
+        self.add_serial_port_dropdown(layout)
+        self.add_apply_button(layout)
         self.add_reset_load_buttons(layout)
     
     def add_primary_buttons(self, layout):
@@ -188,22 +187,24 @@ class Base:
             layout.put(button, button_coords[i][0], button_coords[i][1])
             button.show()
 
-    def add_serial_port_dropdown(self, layout, drop):
+    def add_serial_port_dropdown(self, layout):
+        self.drop = gtk.combo_box_new_text()
         drop_size = (window_width/3*2, window_height/(rows+1)/2)
-        drop.set_size_request(drop_size[0], drop_size[1])
+        self.drop.set_size_request(drop_size[0], drop_size[1])
+        self.drop.set_title('Serial Ports')
         ports = serial_ports()
         for i in ports:
-            drop.append_text(i)
+            self.drop.append_text(i)
         drop_coords = (0, window_height/(rows+1)*rows)
-        layout.put(drop, drop_coords[0], drop_coords[1])
-        drop.show()
+        layout.put(self.drop, drop_coords[0], drop_coords[1])
+        self.drop.show()
     
-    def add_apply_button(self, layout, drop):
+    def add_apply_button(self, layout):
         button_size = (window_width/3, window_height/(rows+1))
         button = gtk.Button(label = 'apply')
         button.set_size_request(button_size[0], button_size[1])
         button_coord = (window_width-button_size[0], button_size[1]*(rows))
-        button.connect('clicked', apply_changes, drop.get_active_text())
+        button.connect('clicked', self.apply_changes, self.get_drop_text())
         layout.put(button, button_coord[0], button_coord[1])
         button.show()
     
@@ -221,6 +222,21 @@ class Base:
         load.connect('clicked', read_preferences_bind, '')
         layout.put(load, button_coord[0], button_coord[1])
         load.show()
+     
+    def get_drop_text(self):
+        return self.drop.get_active_text()
+           
+    def apply_changes(self, widget, data = None):
+        print 'function to apply changes'
+        for i in new_symbols:
+            symbols[i] = new_symbols[i]
+        print_symbol_changes()
+        new_port = self.get_drop_text()
+        if new_port != None:
+            ser.close()
+            ser.port = self.get_drop_text()
+            ser.open()
+            print_serial_change()
     
     def main(self):
         gtk.main()
