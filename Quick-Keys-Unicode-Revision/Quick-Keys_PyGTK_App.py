@@ -117,30 +117,32 @@ def serial_ports():
     return result
     
 def save_preferences():
-    f = open(pref_file, 'w+')
-    for i in symbols:
-        f.write(symbols[i] + '\n')
-    if ser.port != None:
-        f.write(ser.port + '\n')
-    else:
-        f.write('\n')
+    f = open(pref_file, 'w+')                                           # open the preference file
+    for i in symbols:                                                   # for every symbol
+        f.write(symbols[i] + '\n')                                      # write them to the file
+    if ser.port != None:                                                # if the current serial port is valid
+        f.write(ser.port + '\n')                                        # write it to the file
+    else:                                                               # otherwise
+        f.write('\n')                                                   # write a newline character
     
 def read_preferences():
-    global ser
-    f = open(pref_file)
-    for i in symbols:
-        symbols[i] = f.readline().rstrip('\r\n')
-    port = f.readline().rstrip('\r\n')
-    print port
-    try:
-        ser = serial.Serial(port)
-        print_serial_change()
-    except:
-        print 'Error setting serial port. Try again later.'
-        ser = serial.Serial(None)
+    global ser                                                          # define the ser variable as global
+    f = open(pref_file)                                                 # open the preference file
+    for i in symbols:                                                   # for every symbol
+        symbols[i] = f.readline().rstrip('\r\n')                        # set the current symbols to the value from the file
+    new_port = f.readline().rstrip('\r\n')                              # read the new port from the file
+    print new_port
+    if new_port != '' and new_port in serial_ports():                   # if the new port is a valid port
+    #try:
+        ser = serial.Serial(new_port)                                   # set the serial port to it
+        print_serial_change()                                           # print the changes
+    #except:
+    else:                                                               # otherwise
+        print 'Error setting serial port. Try again later.'             # print a warning
+        ser = serial.Serial(None)                                       # change the port to None
 
 def read_preferences_bind(widget, data = None):
-    read_preferences()
+    read_preferences()                                                  # a function to bind read_preferences() to a widget
 
 def print_serial_change():
     print 'Serial port has been set to ' + ser.port
@@ -251,20 +253,22 @@ class Base:
            
     def apply_changes(self, widget, data = None):
         print 'function to apply changes'
-        for i in new_symbols:
-            symbols[i] = new_symbols[i]
-        print_symbol_changes()
-        new_port = self.get_drop_text()
-        if new_port != None:
-            ser.close()
-            ser.port = None
-            print self.get_drop_text()
-            ser.port = self.get_drop_text()
-            ser.open()
-            threading.Thread(target = main_script).start()
-            #t1.start()
-        print_serial_change()
-        save_preferences()
+        new_port = self.get_drop_text()                                 # get new serial port from drop down
+        if new_port != None and new_port in serial_ports():             # if port is valid
+            ser.close()                                                 # close the current one
+            ser.port = None                                             # set serial port to None to close current thread
+            print new_port                                              
+            ser.port = new_port                                         # set the serial port to the new port
+            ser.open()                                                  # reopen the serial port
+            threading.Thread(target = main_script).start()              # start a new script thread
+            print_serial_change()                                       # print the changes made
+        else:
+            print 'invalid Serial port selected, port not changed'      # if invalid port selected, print message and proceed
+            
+        for i in new_symbols:                                           # for every symbol
+            symbols[i] = new_symbols[i]                                 # update the value
+        print_symbol_changes()                                          # print the changes
+        save_preferences()                                              # write the changes to the preferences file
     
     def main(self):
         gtk.main()
@@ -279,7 +283,7 @@ if __name__ == '__main__':
         ##ser = serial.Serial('/dev/ttyACM0')
         #ser = serial.Serial('/dev/ttyUSB0')
         ##ser = serial.Serial('/dev/tty.usbmodem1A21')
-        #t1.start()                                                      # start the new thread
+        #t1.start()                                                     # start the new thread
         #print 'Serial port set to ' + ser.port
         
     ##if none found, dont start thread
@@ -288,17 +292,17 @@ if __name__ == '__main__':
         #print 'Serial port not found, please set later'
     
     #check if preferences file exists
-    if os.path.isfile(pref_file):
-        read_preferences()
+    if os.path.isfile(pref_file):                                       # if the preferences file exists
+        read_preferences()                                              # read the symbols and port from it
         
-    else:
-        save_preferences()
+    else:                                                               # if it doesnt
+        save_preferences()                                              # create it using default values
         print 'Preference file saved'
     
-    if ser.port:
-        t1.start()
+    if ser.port in serial_ports():                                      # if the serial port read from the file is valid
+        t1.start()                                                      # start the script thread
     else:
-        print 'Please set port to launch script'
+        print 'Please set port to launch script'                        # otherwise warn the user
     
     main_window = Base()                                                # create a window object
     main_window.main()                                                  # run the object
