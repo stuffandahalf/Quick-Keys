@@ -152,7 +152,8 @@ def print_symbol_changes():
 
 class Unplugged:
     '''
-class for window to prompt user 
+    class for window to prompt user to reconnect
+    '''
     def __init__(self):
         pass
 
