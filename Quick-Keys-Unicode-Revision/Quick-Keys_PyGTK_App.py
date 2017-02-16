@@ -57,12 +57,8 @@ for i in symbols:
     new_symbols[i] = symbols[i]
 
 def main_script():
-    while True:
-        if ser.port:
-            try:
-                ser.open()
-            except:
-                pass
+    while ser.port != None:
+        try:
             ind = ser.readline().rstrip('\r\n')
             hexval = symbols[ind].encode("unicode_escape")
             print hexval
@@ -88,6 +84,9 @@ def main_script():
                     
             else:
                 k.type_string(hexval)
+        except:
+            ser.close()
+            ser.port = None
                 
 def serial_ports():
     """ Lists serial port names
@@ -150,6 +149,12 @@ def print_symbol_changes():
     print 'Symbols have been changed to: '
     for i in symbols:
         print symbols[i]
+
+class Unplugged:
+    '''
+class for window to prompt user 
+    def __init__(self):
+        pass
 
 class Base:
     def __init__(self):
@@ -251,9 +256,12 @@ class Base:
         new_port = self.get_drop_text()
         if new_port != None:
             ser.close()
+            ser.port = None
             print self.get_drop_text()
             ser.port = self.get_drop_text()
             ser.open()
+            threading.Thread(target = main_script).start()
+            #t1.start()
         print_serial_change()
         save_preferences()
     
@@ -286,7 +294,10 @@ if __name__ == '__main__':
         save_preferences()
         print 'Preference file saved'
     
-    t1.start()
+    if ser.port:
+        t1.start()
+    else:
+        print 'Please set port to launch script'
     
     main_window = Base()                                                # create a window object
     main_window.main()                                                  # run the object

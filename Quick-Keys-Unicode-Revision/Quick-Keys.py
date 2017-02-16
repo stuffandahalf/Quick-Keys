@@ -17,12 +17,14 @@ symbols = {'1' : u'π',
 #ser = serial.Serial('/dev/ttyACM0')													#the port the arduino is connected to
 ser = serial.Serial('/dev/ttyUSB0')
 #ser = serial.Serial('/dev/tty.usbmodem1A21')
+connected = True
 
 while True:
-    while ser.readline().decode('utf-8')[:2]:
+    if connected:
         try:
-            ind = ser.read()
-            #print ind
+            #if connected:
+
+            ind = ser.readline().rstrip('\r\n')
             hexval = symbols[ind].encode("unicode_escape")
             print hexval
             if hexval[:2] == '\u':
@@ -49,4 +51,7 @@ while True:
                 k.type_string(hexval)
             
         except:
-            pass
+            print "failed"
+            connected = False
+    else:
+        print 'failed'
