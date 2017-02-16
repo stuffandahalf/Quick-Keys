@@ -10,7 +10,8 @@ int main(int argc, char **argv)
 {
     int ser = open("/dev/ttyUSB0", O_RDONLY);
     char byte[0x1000];
-    while(true) {
+    while(true)
+    {
         int size = read(ser, &byte, 1);
         if(size > 0) {
             cout << byte;
