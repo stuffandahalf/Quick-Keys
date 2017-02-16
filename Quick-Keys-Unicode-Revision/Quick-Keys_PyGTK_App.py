@@ -178,43 +178,43 @@ class Base:
         self.add_reset_load_buttons(layout)
     
     def add_primary_buttons(self, layout):
-        button_size = (window_width/columns, window_height/(rows+1))
-        button_coords = []
-        for y in range(rows):
-            for x in range(columns):
-                button_coords.append((button_size[0]*x, button_size[1]*y))
+        button_size = (window_width/columns, window_height/(rows+1))    # calculate the size of the buttons
+        button_coords = []                                              # a list of coordinates for the buttons
+        for y in range(rows):                                           # for every row
+            for x in range(columns):                                    # for every column
+                button_coords.append((button_size[0]*x, button_size[1]*y))  # add the coordinates of that button to the list
         
-        self.button = []
-        for i in range(len(symbols)):
-            self.button.append(gtk.Button(label = symbols[str(i+1)]))
-            self.button[i].set_size_request(button_size[0], button_size[1])
-            self.button[i].connect('clicked', self.test, '')
-            layout.put(self.button[i], button_coords[i][0], button_coords[i][1])
-            self.button[i].show()
+        self.button = []                                                # list of buttons
+        for i in range(len(symbols)):                                   # for every symbol
+            self.button.append(gtk.Button(label = symbols[str(i+1)]))   # make a new button object
+            self.button[i].set_size_request(button_size[0], button_size[1])     # set the size of the button
+            self.button[i].connect('clicked', self.test, '')            # bind the button to the test function
+            layout.put(self.button[i], button_coords[i][0], button_coords[i][1])    # place the button on the layout
+            self.button[i].show()                                       # show the button
 
     def add_serial_port_dropdown(self, layout):
-        self.drop = gtk.combo_box_new_text()
-        drop_size = (window_width/3*2, window_height/(rows+1)/2)
-        self.drop.set_size_request(drop_size[0], drop_size[1])
-        self.drop.set_title('Serial Ports')
-        self.ports = serial_ports()
+        self.drop = gtk.combo_box_new_text()                            # create a new combo box object
+        drop_size = (window_width/3*2, window_height/(rows+1)/2)        # the size of the drop down box
+        self.drop.set_size_request(drop_size[0], drop_size[1])          # set the size of the drop down
+        self.drop.set_title('Serial Ports')                             # set the title (wip)
+        self.ports = serial_ports()                                     # create a list of available ports
         print self.ports
         #try:
             #self.drop.set_active(self.ports.index(ser.port))
         #except:
             #pass
-        for i in self.ports:
-            self.drop.append_text(i)
-        drop_coords = (0, window_height/(rows+1)*rows)
-        layout.put(self.drop, drop_coords[0], drop_coords[1])
-        self.drop.show()
+        for i in self.ports:                                            # for every port
+            self.drop.append_text(i)                                    # add it to the dropdown
+        drop_coords = (0, window_height/(rows+1)*rows)                  # the coordinates of the drop
+        layout.put(self.drop, drop_coords[0], drop_coords[1])           # place it on the layout
+        self.drop.show()                                                # show the drop
     
     def redraw_serial_dropdown(self, widget, data = None):
-        for i in range(len(self.ports)):
-            self.drop.remove_text(0)
-        self.ports = serial_ports()
-        for i in self.ports:
-            self.drop.append_text(i)
+        for i in range(len(self.ports)):                                # for every port in the current list
+            self.drop.remove_text(0)                                    # remove the values from the dropdown
+        self.ports = serial_ports()                                     # refresh the list of ports
+        for i in self.ports:                                            # for every new port
+            self.drop.append_text(i)                                    # add it to the dropdown
         print self.ports
         
     def test(self, widget, data = None):
@@ -224,29 +224,29 @@ class Base:
         #print self.drop.get_row_span_column()  
     
     def add_apply_button(self, layout):
-        button_size = (window_width/3, window_height/(rows+1))
-        button = gtk.Button(label = 'apply')
-        button.set_size_request(button_size[0], button_size[1])
-        button_coord = (window_width-button_size[0], button_size[1]*(rows))
-        button.connect('clicked', self.apply_changes, self.get_drop_text())
-        layout.put(button, button_coord[0], button_coord[1])
-        button.show()
+        button_size = (window_width/3, window_height/(rows+1))          # tuple holding the size of the button
+        button = gtk.Button(label = 'apply')                            # creating another button object
+        button.set_size_request(button_size[0], button_size[1])         # set the size of the button
+        button_coord = (window_width-button_size[0], button_size[1]*(rows))     # tuple holding the location of the button
+        button.connect('clicked', self.apply_changes, self.get_drop_text())     # bind the button to apply_changes()
+        layout.put(button, button_coord[0], button_coord[1])            # place the button on the layout
+        button.show()                                                   # show the button
     
     def add_reset_load_buttons(self, layout):
-        button_size = (window_width/3, window_height/(rows+1)/2)
-        reset = gtk.Button(label = 'reset')
-        reset.set_size_request(button_size[0], button_size[1])
-        button_coord = (0, button_size[1]*(rows*2+1))
-        reset.connect('clicked', self.redraw_serial_dropdown, '')
-        layout.put(reset, button_coord[0], window_height-button_size[1])
-        reset.show()
+        button_size = (window_width/3, window_height/(rows+1)/2)        # tuple to store dimension of buttons
+        reset = gtk.Button(label = 'reset')                             # create button object
+        reset.set_size_request(button_size[0], button_size[1])          # set the size of the button to the tuple
+        button_coord = (0, button_size[1]*(rows*2+1))                   # tuple containing the top left coordinates of the button
+        reset.connect('clicked', self.redraw_serial_dropdown, '')       # bind the button to redraw the serial drop down
+        layout.put(reset, button_coord[0], window_height-button_size[1])# place the button on the layout
+        reset.show()                                                    # show the button
         
-        load = gtk.Button(label = 'load')
-        load.set_size_request(button_size[0], button_size[1])
-        button_coord = (window_width/3, window_height-button_size[1])
-        load.connect('clicked', read_preferences_bind, '')
-        layout.put(load, button_coord[0], button_coord[1])
-        load.show()
+        load = gtk.Button(label = 'load')                               # create another button object with label load
+        load.set_size_request(button_size[0], button_size[1])           # set the size to the size tuple
+        button_coord = (window_width/3, window_height-button_size[1])   # tupe containing the coordinates of the top left corner
+        load.connect('clicked', read_preferences_bind, '')              # bind the button to read_preferences()
+        layout.put(load, button_coord[0], button_coord[1])              # place the load button on the layout
+        load.show()                                                     # show the button
      
     def get_drop_text(self):
         return self.drop.get_active_text()
