@@ -8,11 +8,11 @@ import threading
 import serial
 import platform
 import time
-import sys
-import glob
 import os.path
 from pykeyboard import PyKeyboard
+
 from text_prompt import getText
+from serial_scanner import serial_ports
 
 #importing gui components
 import pygtk
@@ -25,7 +25,7 @@ ser = serial.Serial(None)
 window_height = 300
 window_width = 300
 
-rows = 2       #6 button version
+rows = 2         #6 button version
 columns = 3
 
 #rows = 3        #12 button version
@@ -91,34 +91,6 @@ def main_script():
         except:
             ser.close()
             ser.port = None
-                
-def serial_ports():
-    """ Lists serial port names
-
-        :raises EnvironmentError:
-            On unsupported or unknown platforms
-        :returns:
-            A list of the serial ports available on the system
-    """
-    if sys.platform.startswith('win'):
-        ports = ['COM%s' % (i + 1) for i in range(256)]
-    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
-        # this excludes your current terminal "/dev/tty"
-        ports = glob.glob('/dev/tty[A-Za-z]*')
-    elif sys.platform.startswith('darwin'):
-        ports = glob.glob('/dev/tty.*')
-    else:
-        raise EnvironmentError('Unsupported platform')
-
-    result = []
-    for port in ports:
-        try:
-            s = serial.Serial(port)
-            s.close()
-            result.append(port)
-        except (OSError, serial.SerialException):
-            pass
-    return result
     
 def save_preferences():
     f = open(pref_file, 'w+')                                           # open the preference file
@@ -251,18 +223,18 @@ class Base:
         button.show()                                                   # show the button
     
     def add_refresh_load_buttons(self, layout):
-        button_size = (window_width/3, window_height/(rows+1)/2)        # tuple to store dimension of buttons
+        button_size = (window_width/3, window_height/(rows+1)/2)            # tuple to store dimension of buttons
         refresh = gtk.Button(label = 'refresh')                             # create button object
-        refresh.set_size_request(button_size[0], button_size[1])          # set the size of the button to the tuple
-        button_coord = (0, button_size[1]*(rows*2+1))                   # tuple containing the top left coordinates of the button
-        refresh.connect('clicked', self.refresh_serial_dropdown, '')       # bind the button to redraw the serial drop down
-        layout.put(refresh, button_coord[0], window_height-button_size[1])# place the button on the layout
-        refresh.show()                                                    # show the button
+        refresh.set_size_request(button_size[0], button_size[1])            # set the size of the button to the tuple
+        button_coord = (0, button_size[1]*(rows*2+1))                       # tuple containing the top left coordinates of the button
+        refresh.connect('clicked', self.refresh_serial_dropdown, '')        # bind the button to redraw the serial drop down
+        layout.put(refresh, button_coord[0], window_height-button_size[1])  # place the button on the layout
+        refresh.show()                                                      # show the button
         
         load = gtk.Button(label = 'load')                               # create another button object with label load
         load.set_size_request(button_size[0], button_size[1])           # set the size to the size tuple
         button_coord = (window_width/3, window_height-button_size[1])   # tupe containing the coordinates of the top left corner
-        load.connect('clicked', self.read_preferences_bind, '')              # bind the button to read_preferences()
+        load.connect('clicked', self.read_preferences_bind, '')         # bind the button to read_preferences()
         layout.put(load, button_coord[0], button_coord[1])              # place the load button on the layout
         load.show()                                                     # show the button
      

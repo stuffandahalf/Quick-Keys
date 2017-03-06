@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #source from https://ardoris.wordpress.com/2008/07/05/pygtk-text-entry-dialog/
 #modified by Gregory Norton
 
