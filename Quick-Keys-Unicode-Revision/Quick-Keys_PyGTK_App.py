@@ -61,36 +61,36 @@ for i in symbols:
     new_symbols[i] = symbols[i]
 
 def main_script():
-    while ser.port != None:
-        try:
-            ind = ser.readline().rstrip('\r\n')
-            hexval = symbols[ind].encode("unicode_escape")
+    while ser.port != None:                                             # while the selected serial port is valid
+        try:                                                            # try
+            ind = ser.readline().rstrip('\r\n')                         # read the index from the serial port
+            hexval = symbols[ind].encode("unicode_escape")              # encode the index
             print hexval
-            if hexval[:2] == '\u':
-                if platform.system() == 'Linux':
-                    k.press_key('Control_L')
-                    k.press_key('Shift_L')
-                    k.tap_key('u')
-                    k.release_key('Control_L')
-                    k.release_key('Shift_L')
-                    hexval = hexval[2:]
-                    k.type_string(hexval)
-                    k.tap_key('Return')
+            if hexval[:2] == '\u':                                      # if the value is a hex number
+                if platform.system() == 'Linux':                        # for linux platforms
+                    k.press_key('Control_L')                            # press the control
+                    k.press_key('Shift_L')                              # the left shift
+                    k.tap_key('u')                                      # and the u key
+                    k.release_key('Control_L')                          # release the control
+                    k.release_key('Shift_L')                            # and shift keys
+                    hexval = hexval[2:]                                 # remove the unicode escape character
+                    k.type_string(hexval)                               # type the unicode string
+                    k.tap_key('Return')                                 # tap the return key
                     
-                elif platform.system() == 'Windows':
+                elif platform.system() == 'Windows':                    # for windows platforms
                     pass
                     
-                elif platform.system() == 'Darwin':
+                elif platform.system() == 'Darwin':                     # for darwin platforms
                     pass
                 
-                else:
-                    print 'Unsupported platform'
+                else:                                                   # for all other platforms
+                    print 'Unsupported platform'                        # print unsupported platform
                     
-            else:
-                k.type_string(hexval)
-        except:
-            ser.close()
-            ser.port = None
+            else:                                                       # if the given string isnt a unicode character
+                k.type_string(hexval)                                   # just type the string
+        except:                                                         # except
+            ser.close()                                                 # close the serial port
+            ser.port = None                                             # set the port to None
     
 def save_preferences():
     f = open(pref_file, 'w+')                                           # open the preference file
@@ -105,11 +105,11 @@ def read_preferences():
     global ser                                                          # define the ser variable as global
     f = open(pref_file)                                                 # open the preference file
     for i in symbols:                                                   # for every symbol
-        sym = f.readline().rstrip('\r\n')
+        sym = f.readline().rstrip('\r\n')                               # read the symbol from the file
         #symbols[i] = f.readline().rstrip('\r\n')                        # set the current symbols to the value from the file
         #new_symbols[i] = f.readline().rstrip('\r\n')
-        symbols[i] = sym
-        new_symbols[i] = sym
+        symbols[i] = sym                                                # assign the symbol to the dictionary of symbols
+        new_symbols[i] = sym                                            # and the new one
         
         
     new_port = f.readline().rstrip('\r\n')                              # read the new port from the file
@@ -137,37 +137,37 @@ class Unplugged:
         pass
 
 class Base:
-    def __init__(self):
-        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-        self.window.set_default_size(window_width, window_height)
-        self.window.set_size_request(window_width, window_height)
-        self.window.show()
-        self.window.set_title('Quick-Keys')
-        self.window.set_icon_from_file('icon.png')
+    def __init__(self):                                                 # constructor for Base class
+        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)                   # make a new window object
+        self.window.set_default_size(window_width, window_height)       # set the default and
+        self.window.set_size_request(window_width, window_height)       # minimum size of the window
+        self.window.show()                                              # show the window
+        self.window.set_title('Quick-Keys')                             # set the title of the window
+        self.window.set_icon_from_file('icon.png')                      # set the icon for the window
         
-        layout = gtk.Layout()
-        self.window.add(layout)
-        layout.show()
+        layout = gtk.Layout()                                           # create a new gtk layout object
+        self.window.add(layout)                                         # add the layout to the window
+        layout.show()                                                   # show the layout
         
-        self.add_primary_buttons(layout)
-        self.add_serial_port_dropdown(layout)
-        self.add_apply_button(layout)
-        self.add_refresh_load_buttons(layout)
+        self.add_primary_buttons(layout)                                # add the main symbol buttons
+        self.add_serial_port_dropdown(layout)                           # add the serial port dropdown
+        self.add_apply_button(layout)                                   # add the apply button
+        self.add_refresh_load_buttons(layout)                           # add the refresh and load buttons
     
     def add_primary_buttons(self, layout):
-        button_size = (window_width/columns, window_height/(rows+1))    # calculate the size of the buttons
-        button_coords = []                                              # a list of coordinates for the buttons
-        for y in range(rows):                                           # for every row
-            for x in range(columns):                                    # for every column
+        button_size = (window_width/columns, window_height/(rows+1))        # calculate the size of the buttons
+        button_coords = []                                                  # a list of coordinates for the buttons
+        for y in range(rows):                                               # for every row
+            for x in range(columns):                                        # for every column
                 button_coords.append((button_size[0]*x, button_size[1]*y))  # add the coordinates of that button to the list
         
-        self.button = []                                                # list of buttons
-        for i in range(len(symbols)):                                   # for every symbol
-            self.button.append(gtk.Button(label = symbols[str(i+1)]))   # make a new button object
+        self.button = []                                                    # list of buttons
+        for i in range(len(symbols)):                                       # for every symbol
+            self.button.append(gtk.Button(label = symbols[str(i+1)]))       # make a new button object
             self.button[i].set_size_request(button_size[0], button_size[1])     # set the size of the button
             self.button[i].connect('clicked', self.button_symbols, i)            # bind the button to the test function
             layout.put(self.button[i], button_coords[i][0], button_coords[i][1])    # place the button on the layout
-            self.button[i].show()                                       # show the button
+            self.button[i].show()                                           # show the button
 
     def add_serial_port_dropdown(self, layout):
         self.drop = gtk.combo_box_new_text()                            # create a new combo box object
@@ -192,35 +192,35 @@ class Base:
         self.ports = serial_ports()                                     # refresh the list of ports
         for i in self.ports:                                            # for every new port
             self.drop.append_text(i)                                    # add it to the dropdown
-        self.clear_symbol_changes()
+        self.clear_symbol_changes()                                     # clear any symbol changes that might've been made
         #print self.ports
         
     def button_symbols(self, widget, data = None):
-        data += 1
-        new_symbols[str(data)] = getText(symbols[str(data)])
+        data += 1                                                       # increment the index data by 1
+        new_symbols[str(data)] = getText(symbols[str(data)])            # set the new symbol to the value retrieved from the popup
         print data
         #self.drop.append_text('test')
         #self.ports.append('test')
         #print self.ports
-        self.refresh_symbols()
+        self.update_symbols()                                          # update the symbol button labels
         #print self.drop.get_row_span_column()  
     
-    def refresh_symbols(self):
-        for i in range(len(new_symbols)):
-            self.button[i].set_label(new_symbols[str(i+1)])
+    def update_symbols(self):
+        for i in range(len(new_symbols)):                               # for every button
+            self.button[i].set_label(new_symbols[str(i+1)])             # set the label of the button to the new symbol
             
     def clear_symbol_changes(self):
-        for i in range(len(new_symbols)):
-            self.button[i].set_label(symbols[str(i+1)])
+        for i in range(len(new_symbols)):                               # for every symbol/button
+            self.button[i].set_label(symbols[str(i+1)])                 # set the button label to the old symbol
     
     def add_apply_button(self, layout):
-        button_size = (window_width/3, window_height/(rows+1))          # tuple holding the size of the button
-        button = gtk.Button(label = 'apply')                            # creating another button object
-        button.set_size_request(button_size[0], button_size[1])         # set the size of the button
+        button_size = (window_width/3, window_height/(rows+1))                  # tuple holding the size of the button
+        button = gtk.Button(label = 'apply')                                    # creating another button object
+        button.set_size_request(button_size[0], button_size[1])                 # set the size of the button
         button_coord = (window_width-button_size[0], button_size[1]*(rows))     # tuple holding the location of the button
         button.connect('clicked', self.apply_changes, self.get_drop_text())     # bind the button to apply_changes()
-        layout.put(button, button_coord[0], button_coord[1])            # place the button on the layout
-        button.show()                                                   # show the button
+        layout.put(button, button_coord[0], button_coord[1])                    # place the button on the layout
+        button.show()                                                           # show the button
     
     def add_refresh_load_buttons(self, layout):
         button_size = (window_width/3, window_height/(rows+1)/2)            # tuple to store dimension of buttons
@@ -242,8 +242,8 @@ class Base:
         return self.drop.get_active_text()
            
     def read_preferences_bind(self, widget, data = None):
-        read_preferences()                                                  # a method to bind read_preferences() to a widget
-        self.refresh_symbols()  
+        read_preferences()                                              # a method to bind read_preferences() to a widget
+        self.update_symbols()                                           # a update the button labels
     
     def apply_changes(self, widget, data = None):
         print 'function to apply changes'
@@ -261,7 +261,7 @@ class Base:
             
         for i in new_symbols:                                           # for every symbol
             symbols[i] = new_symbols[i]                                 # update the value
-        self.refresh_symbols()
+        self.update_symbols()
         print_symbol_changes()                                          # print the changes
         save_preferences()                                              # write the changes to the preferences file
     
