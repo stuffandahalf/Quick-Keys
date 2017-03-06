@@ -12,6 +12,7 @@ import sys
 import glob
 import os.path
 from pykeyboard import PyKeyboard
+from text_prompt import getText
 
 #importing gui components
 import pygtk
@@ -24,20 +25,23 @@ ser = serial.Serial(None)
 window_height = 300
 window_width = 300
 
-rows = 2
+rows = 2       #6 button version
 columns = 3
+
+#rows = 3        #12 button version
+#columns = 4
 
 pref_file = 'Quick-Keys Preferences'
 
 #dictionary of symbols corresponding to the arduino
-symbols = {'1' : 'π',
+symbols = {'1' : 'π',          #6 button version
            '2' : 'Σ',
            '3' : 'α',
            '4' : 'β',
            '5' : 'Δ',
            '6' : 'Ω'}
            
-#symbols = {'1' : 'π',
+#symbols = {'1' : 'π',           #12 button version
            #'2' : 'Σ',
            #'3' : 'α',
            #'4' : 'β',
@@ -129,20 +133,21 @@ def read_preferences():
     global ser                                                          # define the ser variable as global
     f = open(pref_file)                                                 # open the preference file
     for i in symbols:                                                   # for every symbol
-        symbols[i] = f.readline().rstrip('\r\n')                        # set the current symbols to the value from the file
+        sym = f.readline().rstrip('\r\n')
+        #symbols[i] = f.readline().rstrip('\r\n')                        # set the current symbols to the value from the file
+        #new_symbols[i] = f.readline().rstrip('\r\n')
+        symbols[i] = sym
+        new_symbols[i] = sym
+        
+        
     new_port = f.readline().rstrip('\r\n')                              # read the new port from the file
     print new_port
     if new_port != '' and new_port in serial_ports():                   # if the new port is a valid port
-    #try:
         ser = serial.Serial(new_port)                                   # set the serial port to it
         print_serial_change()                                           # print the changes
-    #except:
     else:                                                               # otherwise
         print 'Error setting serial port. Try again later.'             # print a warning
         ser = serial.Serial(None)                                       # change the port to None
-
-def read_preferences_bind(widget, data = None):
-    read_preferences()                                                  # a function to bind read_preferences() to a widget
 
 def print_serial_change():
     print 'Serial port has been set to ' + ser.port
@@ -175,7 +180,7 @@ class Base:
         self.add_primary_buttons(layout)
         self.add_serial_port_dropdown(layout)
         self.add_apply_button(layout)
-        self.add_reset_load_buttons(layout)
+        self.add_refresh_load_buttons(layout)
     
     def add_primary_buttons(self, layout):
         button_size = (window_width/columns, window_height/(rows+1))    # calculate the size of the buttons
@@ -188,7 +193,7 @@ class Base:
         for i in range(len(symbols)):                                   # for every symbol
             self.button.append(gtk.Button(label = symbols[str(i+1)]))   # make a new button object
             self.button[i].set_size_request(button_size[0], button_size[1])     # set the size of the button
-            self.button[i].connect('clicked', self.test, '')            # bind the button to the test function
+            self.button[i].connect('clicked', self.button_symbols, i)            # bind the button to the test function
             layout.put(self.button[i], button_coords[i][0], button_coords[i][1])    # place the button on the layout
             self.button[i].show()                                       # show the button
 
@@ -209,19 +214,32 @@ class Base:
         layout.put(self.drop, drop_coords[0], drop_coords[1])           # place it on the layout
         self.drop.show()                                                # show the drop
     
-    def redraw_serial_dropdown(self, widget, data = None):
+    def refresh_serial_dropdown(self, widget, data = None):
         for i in range(len(self.ports)):                                # for every port in the current list
             self.drop.remove_text(0)                                    # remove the values from the dropdown
         self.ports = serial_ports()                                     # refresh the list of ports
         for i in self.ports:                                            # for every new port
             self.drop.append_text(i)                                    # add it to the dropdown
-        print self.ports
+        self.clear_symbol_changes()
+        #print self.ports
         
-    def test(self, widget, data = None):
-        self.drop.append_text('test')
-        self.ports.append('test')
-        print self.ports
+    def button_symbols(self, widget, data = None):
+        data += 1
+        new_symbols[str(data)] = getText(symbols[str(data)])
+        print data
+        #self.drop.append_text('test')
+        #self.ports.append('test')
+        #print self.ports
+        self.refresh_symbols()
         #print self.drop.get_row_span_column()  
+    
+    def refresh_symbols(self):
+        for i in range(len(new_symbols)):
+            self.button[i].set_label(new_symbols[str(i+1)])
+            
+    def clear_symbol_changes(self):
+        for i in range(len(new_symbols)):
+            self.button[i].set_label(symbols[str(i+1)])
     
     def add_apply_button(self, layout):
         button_size = (window_width/3, window_height/(rows+1))          # tuple holding the size of the button
@@ -232,25 +250,29 @@ class Base:
         layout.put(button, button_coord[0], button_coord[1])            # place the button on the layout
         button.show()                                                   # show the button
     
-    def add_reset_load_buttons(self, layout):
+    def add_refresh_load_buttons(self, layout):
         button_size = (window_width/3, window_height/(rows+1)/2)        # tuple to store dimension of buttons
-        reset = gtk.Button(label = 'reset')                             # create button object
-        reset.set_size_request(button_size[0], button_size[1])          # set the size of the button to the tuple
+        refresh = gtk.Button(label = 'refresh')                             # create button object
+        refresh.set_size_request(button_size[0], button_size[1])          # set the size of the button to the tuple
         button_coord = (0, button_size[1]*(rows*2+1))                   # tuple containing the top left coordinates of the button
-        reset.connect('clicked', self.redraw_serial_dropdown, '')       # bind the button to redraw the serial drop down
-        layout.put(reset, button_coord[0], window_height-button_size[1])# place the button on the layout
-        reset.show()                                                    # show the button
+        refresh.connect('clicked', self.refresh_serial_dropdown, '')       # bind the button to redraw the serial drop down
+        layout.put(refresh, button_coord[0], window_height-button_size[1])# place the button on the layout
+        refresh.show()                                                    # show the button
         
         load = gtk.Button(label = 'load')                               # create another button object with label load
         load.set_size_request(button_size[0], button_size[1])           # set the size to the size tuple
         button_coord = (window_width/3, window_height-button_size[1])   # tupe containing the coordinates of the top left corner
-        load.connect('clicked', read_preferences_bind, '')              # bind the button to read_preferences()
+        load.connect('clicked', self.read_preferences_bind, '')              # bind the button to read_preferences()
         layout.put(load, button_coord[0], button_coord[1])              # place the load button on the layout
         load.show()                                                     # show the button
      
     def get_drop_text(self):
         return self.drop.get_active_text()
            
+    def read_preferences_bind(self, widget, data = None):
+        read_preferences()                                                  # a method to bind read_preferences() to a widget
+        self.refresh_symbols()  
+    
     def apply_changes(self, widget, data = None):
         print 'function to apply changes'
         new_port = self.get_drop_text()                                 # get new serial port from drop down
@@ -267,6 +289,7 @@ class Base:
             
         for i in new_symbols:                                           # for every symbol
             symbols[i] = new_symbols[i]                                 # update the value
+        self.refresh_symbols()
         print_symbol_changes()                                          # print the changes
         save_preferences()                                              # write the changes to the preferences file
     
