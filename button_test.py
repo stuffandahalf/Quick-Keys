@@ -64,6 +64,28 @@ class Base:
         
         self.set_drop(layout)
         #print drop.get_active_text()
+        
+        mb = gtk.MenuBar()
+        
+        filemenu = gtk.Menu()
+        filemenu.show()
+        filem = gtk.MenuItem("File")
+        filem.set_submenu(filemenu)
+        filem.show()
+        exit = gtk.MenuItem("Exit")
+        exit.show()
+        filemenu.append(exit)
+        
+        testmenu = gtk.Menu()
+        testmenu.show()
+        testm = gtk.MenuItem("test")
+        testm.set_submenu(testmenu)
+        testm.show()
+        
+        mb.append(filem)
+        mb.append(testm)
+        layout.add(mb)
+
     
     def set_drop(self, layout):
         drop_size = (window_width/3*2, window_height/(rows+1)/2)

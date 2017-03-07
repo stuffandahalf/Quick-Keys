@@ -4,6 +4,7 @@
 #modified by Gregory Norton
 
 import gtk
+
 def responseToDialog(entry, dialog, response):
     dialog.response(response)
     

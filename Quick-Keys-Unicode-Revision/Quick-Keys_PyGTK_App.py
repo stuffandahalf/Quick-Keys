@@ -153,6 +153,7 @@ class Base:
         self.add_serial_port_dropdown(layout)                           # add the serial port dropdown
         self.add_apply_button(layout)                                   # add the apply button
         self.add_refresh_load_buttons(layout)                           # add the refresh and load buttons
+        self.add_menu_bar(layout)
     
     def add_primary_buttons(self, layout):
         button_size = (window_width/columns, window_height/(rows+1))        # calculate the size of the buttons
@@ -198,7 +199,7 @@ class Base:
     def button_symbols(self, widget, data = None):
         data += 1                                                       # increment the index data by 1
         new_symbols[str(data)] = getText(symbols[str(data)])            # set the new symbol to the value retrieved from the popup
-        print data
+        #print data
         #self.drop.append_text('test')
         #self.ports.append('test')
         #print self.ports
@@ -238,6 +239,19 @@ class Base:
         layout.put(load, button_coord[0], button_coord[1])              # place the load button on the layout
         load.show()                                                     # show the button
      
+    def add_menu_bar(self, layout):
+        menu_bar = gtk.MenuBar()
+        
+        filemenu = gtk.Menu()
+        filemenu.show()     #needed?
+        filem = gtk.MenuItem("File")
+        filem.set_submenu(filemenu)
+        filem.show()
+        
+        menu_bar.append(filem)
+        
+        layout.add(menu_bar)
+    
     def get_drop_text(self):
         return self.drop.get_active_text()
            
