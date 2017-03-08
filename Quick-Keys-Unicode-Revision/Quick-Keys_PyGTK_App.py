@@ -54,6 +54,7 @@ symbols = {'1' : 'π',          #6 button version
            #'11' : 'ayy',
            #'12' : 'lmao'}
 
+profiles = []
 
 #a dictionary to store the changed symbols
 new_symbols = {}
@@ -110,7 +111,7 @@ def read_preferences():
         #new_symbols[i] = f.readline().rstrip('\r\n')
         symbols[i] = sym                                                # assign the symbol to the dictionary of symbols
         new_symbols[i] = sym                                            # and the new one
-        
+        print sym
         
     new_port = f.readline().rstrip('\r\n')                              # read the new port from the file
     print new_port
@@ -248,7 +249,14 @@ class Base:
         filem.set_submenu(filemenu)
         filem.show()
         
+        profilemenu = gtk.Menu()
+        profilemenu.show()   #needed?
+        profilem = gtk.MenuItem("Profiles")
+        profilem.set_submenu(profilemenu)
+        profilem.show()
+        
         menu_bar.append(filem)
+        menu_bar.append(profilem)
         
         layout.add(menu_bar)
     
