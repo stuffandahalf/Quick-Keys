@@ -32,6 +32,7 @@ columns = 3
 #columns = 4
 
 pref_file = 'Quick-Keys Preferences'
+profile_file = 'Quick-Keys Profiles'
 
 #dictionary of symbols corresponding to the arduino
 symbols = {'1' : 'π',          #6 button version
@@ -54,7 +55,7 @@ symbols = {'1' : 'π',          #6 button version
            #'11' : 'ayy',
            #'12' : 'lmao'}
 
-profiles = []
+profiles = [pref_file]
 
 #a dictionary to store the changed symbols
 new_symbols = {}
@@ -93,6 +94,21 @@ def main_script():
             ser.close()                                                 # close the serial port
             ser.port = None                                             # set the port to None
     
+def save_profiles():
+    f = open(profile_file, 'w+')
+    f.write(pref_file + '\n')
+    for i in profiles:
+        f.write(i + '\n')
+    f.close()
+    
+def read_profiles():
+    f = open(profile_file)
+    pref_file = f.readline().rstrip('\r\n')
+    for line in f:
+        profiles.append(line.rstrip('\r\n'))
+    f.close()
+    
+    
 def save_preferences():
     f = open(pref_file, 'w+')                                           # open the preference file
     for i in symbols:                                                   # for every symbol
@@ -101,14 +117,13 @@ def save_preferences():
         f.write(ser.port + '\n')                                        # write it to the file
     else:                                                               # otherwise
         f.write('\n')                                                   # write a newline character
+    f.close()
     
 def read_preferences():
     global ser                                                          # define the ser variable as global
     f = open(pref_file)                                                 # open the preference file
     for i in symbols:                                                   # for every symbol
         sym = f.readline().rstrip('\r\n')                               # read the symbol from the file
-        #symbols[i] = f.readline().rstrip('\r\n')                        # set the current symbols to the value from the file
-        #new_symbols[i] = f.readline().rstrip('\r\n')
         symbols[i] = sym                                                # assign the symbol to the dictionary of symbols
         new_symbols[i] = sym                                            # and the new one
         print sym
@@ -121,6 +136,7 @@ def read_preferences():
     else:                                                               # otherwise
         print 'Error setting serial port. Try again later.'             # print a warning
         ser = serial.Serial(None)                                       # change the port to None
+    f.close()
 
 def print_serial_change():
     print 'Serial port has been set to ' + ser.port
@@ -308,9 +324,18 @@ if __name__ == '__main__':
         #ser = ''
         #print 'Serial port not found, please set later'
     
+    #check if profiles exist
+    if os.path.isfile(profile_file):
+        read_profiles()
+        print 'Profile file read'
+    else:
+        save_profiles()
+        print 'Profile file saved'
+    
     #check if preferences file exists
     if os.path.isfile(pref_file):                                       # if the preferences file exists
         read_preferences()                                              # read the symbols and port from it
+        print 'Preference file read'
         
     else:                                                               # if it doesnt
         save_preferences()                                              # create it using default values
