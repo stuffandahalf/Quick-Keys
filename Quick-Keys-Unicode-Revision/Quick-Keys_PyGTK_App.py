@@ -150,12 +150,18 @@ def print_symbol_changes():
     for i in symbols:
         print symbols[i]
 
-class Unplugged:
-    '''
-    class for window to prompt user to reconnect
-    '''
-    def __init__(self):
-        pass
+def tray_icon():
+    global status_icon
+    APPINDICATOR_ID = 'Quick-Keys'
+    status_icon = appindicator.Indicator.new(APPINDICATOR_ID, os.path.abspath('icon.png'), appindicator.IndicatorCategory.SYSTEM_SERVICES)
+    status_icon.set_status(appindicator.IndicatorStatus.ACTIVE)
+    icon_menu = gtk.Menu()
+    
+    open_item = gtk.MenuItem('Open')
+    icon_menu.append(open_item)
+    open_item.show()
+    
+    status_icon.set_menu(icon_menu)
 
 class Base:
     def __init__(self):                                                 # constructor for Base class
@@ -266,13 +272,11 @@ class Base:
         menu_bar = gtk.MenuBar()
         
         filemenu = gtk.Menu()
-        filemenu.show()     #needed?
         filem = gtk.MenuItem("File")
         filem.set_submenu(filemenu)
         filem.show()
         
         profilemenu = gtk.Menu()
-        profilemenu.show()   #needed?
         profilem = gtk.MenuItem("Profiles")
         profilem.set_submenu(profilemenu)
         profilem.show()
@@ -352,5 +356,7 @@ if __name__ == '__main__':
     else:
         print 'Please set port to launch script'                        # otherwise warn the user
     
+    status_icon = None
+    tray_icon()
     main_window = Base()                                                # create a window object
     main_window.main()                                                  # run the object
