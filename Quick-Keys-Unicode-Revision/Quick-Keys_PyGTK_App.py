@@ -153,7 +153,9 @@ def print_symbol_changes():
 def tray_icon():
     global status_icon
     APPINDICATOR_ID = 'Quick-Keys'
-    status_icon = appindicator.Indicator.new(APPINDICATOR_ID, os.path.abspath('icon.png'), appindicator.IndicatorCategory.SYSTEM_SERVICES)
+    status_icon = appindicator.Indicator.new(APPINDICATOR_ID,
+                                             os.path.abspath('icon.png'),
+                                             appindicator.IndicatorCategory.SYSTEM_SERVICES)
     status_icon.set_status(appindicator.IndicatorStatus.ACTIVE)
     icon_menu = gtk.Menu()
     
@@ -171,7 +173,7 @@ class Base:
         self.window.set_size_request(window_width, window_height)       # minimum size of the window
         self.window.show()                                              # show the window
         self.window.set_title('Quick-Keys')                             # set the title of the window
-        self.window.set_icon_from_file('icon.png')                      # set the icon for the window
+        self.window.set_icon_from_file(os.path.abspath('icon.png'))     # set the icon for the window
         
         layout = gtk.Layout()                                           # create a new gtk layout object
         self.window.add(layout)                                         # add the layout to the window

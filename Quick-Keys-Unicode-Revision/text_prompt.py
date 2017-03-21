@@ -12,6 +12,10 @@ def responseToDialog(entry, dialog, response):
     dialog.response(response)
     
 def getText(symbol):
+    """
+    creates a dialog box where a user enters a string
+    and returns that string
+    """
     dialog = gtk.MessageDialog()
     dialog.set_markup('Please enter the new symbol:')
     entry = gtk.Entry()
