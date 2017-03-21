@@ -15,9 +15,13 @@ from text_prompt import getText
 from serial_scanner import serial_ports
 
 #importing gui components
-import pygtk
-pygtk.require('2.0')
-import gtk
+#import pygtk
+#pygtk.require('2.0')
+#import gtk
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk as gtk
+from gi.repository import AppIndicator3 as appindicator
 
 k = PyKeyboard()
 ser = serial.Serial(None)
@@ -155,7 +159,8 @@ class Unplugged:
 
 class Base:
     def __init__(self):                                                 # constructor for Base class
-        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)                   # make a new window object
+        #self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)                   # make a new window object
+        self.window = gtk.Window()
         self.window.set_default_size(window_width, window_height)       # set the default and
         self.window.set_size_request(window_width, window_height)       # minimum size of the window
         self.window.show()                                              # show the window
@@ -188,7 +193,8 @@ class Base:
             self.button[i].show()                                           # show the button
 
     def add_serial_port_dropdown(self, layout):
-        self.drop = gtk.combo_box_new_text()                            # create a new combo box object
+        #self.drop = gtk.combo_box_new_text()                            # create a new combo box object
+        self.drop = gtk.ComboBoxText()
         drop_size = (window_width/3*2, window_height/(rows+1)/2)        # the size of the drop down box
         self.drop.set_size_request(drop_size[0], drop_size[1])          # set the size of the drop down
         self.drop.set_title('Serial Ports')                             # set the title (wip)
@@ -308,7 +314,7 @@ class Base:
 
 if __name__ == '__main__':
     
-    gtk.threads_init()                                                  # initialize threads in gtk
+    #gtk.threads_init()                                                  # initialize threads in gtk
     t1 = threading.Thread(target = main_script)                         # create a new thread for the main script
     
     #try to set the port of the arduino
