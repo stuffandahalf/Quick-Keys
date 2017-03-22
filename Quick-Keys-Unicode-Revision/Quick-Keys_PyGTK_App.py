@@ -18,8 +18,10 @@ from serial_scanner import serial_ports
 #import pygtk
 #pygtk.require('2.0')
 #import gtk
+
 import gi
 gi.require_version('Gtk', '3.0')
+gi.require_version('AppIndicator3', '0.1')
 from gi.repository import Gtk as gtk
 from gi.repository import AppIndicator3 as appindicator
 
@@ -32,11 +34,14 @@ window_width = 300
 rows = 2         #6 button version
 columns = 3
 
+#opened = False
+
 #rows = 3        #12 button version
 #columns = 4
 
-pref_file = 'Quick-Keys Preferences'
-profile_file = 'Quick-Keys Profiles'
+pref_file = os.path.abspath('Quick-Keys Preferences')
+profile_file = os.path.abspath('Quick-Keys Profiles')
+icon_file = os.path.abspath('icon.png')
 
 #dictionary of symbols corresponding to the arduino
 symbols = {'1' : 'π',          #6 button version
@@ -150,22 +155,41 @@ def print_symbol_changes():
     for i in symbols:
         print symbols[i]
 
-def tray_icon():
-    global status_icon
-    APPINDICATOR_ID = 'Quick-Keys'
-    status_icon = appindicator.Indicator.new(APPINDICATOR_ID,
-                                             os.path.abspath('icon.png'),
+class Tray_Indicator:
+    opened = True
+    def __init__(self):
+        APPINDICATOR_ID = 'Quick-Keys'
+        self.status_icon = appindicator.Indicator.new(APPINDICATOR_ID,
+                                             icon_file,
                                              appindicator.IndicatorCategory.SYSTEM_SERVICES)
-    status_icon.set_status(appindicator.IndicatorStatus.ACTIVE)
-    icon_menu = gtk.Menu()
-    
-    open_item = gtk.MenuItem('Open')
-    icon_menu.append(open_item)
-    open_item.show()
-    
-    status_icon.set_menu(icon_menu)
+        self.status_icon.set_status(appindicator.IndicatorStatus.ACTIVE)
+        self.add_icon_menu()
 
-class Base:
+    def add_icon_menu(self):
+        icon_menu = gtk.Menu()
+        
+        open_item = gtk.MenuItem('Open Editor')
+        open_item.connect_object('activate', self.open_window, None)
+        icon_menu.append(open_item)
+        
+        quit_item = gtk.MenuItem('Quit')
+        quit_item.connect_object('activate', self.quit_app, None)
+        icon_menu.append(quit_item)
+        
+        open_item.show()
+        quit_item.show()
+        self.status_icon.set_menu(icon_menu)
+
+    def open_window(self, data):
+        #global opened
+        if self.opened == False:
+            self.opened = True
+            window = Editor_Window()
+    
+    def quit_app(self, data):
+        exit()
+
+class Editor_Window:
     def __init__(self):                                                 # constructor for Base class
         #self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)                   # make a new window object
         self.window = gtk.Window()
@@ -173,7 +197,7 @@ class Base:
         self.window.set_size_request(window_width, window_height)       # minimum size of the window
         self.window.show()                                              # show the window
         self.window.set_title('Quick-Keys')                             # set the title of the window
-        self.window.set_icon_from_file(os.path.abspath('icon.png'))     # set the icon for the window
+        self.window.set_icon_from_file(icon_file)                       # set the icon for the window
         
         layout = gtk.Layout()                                           # create a new gtk layout object
         self.window.add(layout)                                         # add the layout to the window
@@ -184,6 +208,8 @@ class Base:
         self.add_apply_button(layout)                                   # add the apply button
         self.add_refresh_load_buttons(layout)                           # add the refresh and load buttons
         self.add_menu_bar(layout)
+        
+        self.window.connect('delete-event', self.close_window)
     
     def add_primary_buttons(self, layout):
         button_size = (window_width/columns, window_height/(rows+1))        # calculate the size of the buttons
@@ -315,26 +341,16 @@ class Base:
         print_symbol_changes()                                          # print the changes
         save_preferences()                                              # write the changes to the preferences file
     
-    def main(self):
-        gtk.main()
+    def close_window(self, widget, e):
+        #global opened
+        #print e
+        self.window.destroy
+        Tray_Indicator.opened = False
 
 if __name__ == '__main__':
     
     #gtk.threads_init()                                                  # initialize threads in gtk
     t1 = threading.Thread(target = main_script)                         # create a new thread for the main script
-    
-    #try to set the port of the arduino
-    #try:
-        ##ser = serial.Serial('/dev/ttyACM0')
-        #ser = serial.Serial('/dev/ttyUSB0')
-        ##ser = serial.Serial('/dev/tty.usbmodem1A21')
-        #t1.start()                                                     # start the new thread
-        #print 'Serial port set to ' + ser.port
-        
-    ##if none found, dont start thread
-    #except:
-        #ser = ''
-        #print 'Serial port not found, please set later'
     
     #check if profiles exist
     if os.path.isfile(profile_file):
@@ -358,7 +374,6 @@ if __name__ == '__main__':
     else:
         print 'Please set port to launch script'                        # otherwise warn the user
     
-    status_icon = None
-    tray_icon()
-    main_window = Base()                                                # create a window object
-    main_window.main()                                                  # run the object
+    tray_icon = Tray_Indicator()
+    main_window = Editor_Window()                                       # create a window object
+    gtk.main()
