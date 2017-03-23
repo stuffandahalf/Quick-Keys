@@ -160,7 +160,6 @@ def print_symbol_changes():
 class Tray_Indicator(object):
     opened = True
     def __init__(self):
-        self.APPINDICATOR_ID = 'Quick-Keys'
         self.icon_menu = None
         
     def open_window(self, data):
@@ -186,17 +185,18 @@ class Tray_Indicator(object):
         return icon_menu
 
 class Linux_Tray_Indicator(Tray_Indicator):
-    def __init(self):
+    def __init__(self):
+        self.APPINDICATOR_ID = 'Quick-Keys'
         super(Linux_Tray_Indicator)
-        self.status_icon = appindicator.Indicator.new(APPINDICATOR_ID,
+        self.status_icon = appindicator.Indicator.new(self.APPINDICATOR_ID,
                                                       icon_file,
                                                       appindicator.IndicatorCategory.SYSTEM_SERVICES)
         self.status_icon.set_status(appindicator.IndicatorStatus.ACTIVE)
         self.right_click_menu()
         
     def right_click_menu(self):
-        icon_menu = self.make_icon_menu()
-        self.status_icon.set_menu(icon_menu)
+        self.icon_menu = self.make_icon_menu()
+        self.status_icon.set_menu(self.icon_menu)
 
 class Windows_Tray_Indicator(Tray_Indicator):
     def __init__(self):
@@ -399,7 +399,7 @@ if __name__ == '__main__':
         t1.start()                                                      # start the script thread
     else:
         print 'Please set port to launch script'                        # otherwise warn the user
-    
+        
     if platform.system() == 'Linux':
         tray_icon = Linux_Tray_Indicator()
     elif platform.system() == 'Windows':
