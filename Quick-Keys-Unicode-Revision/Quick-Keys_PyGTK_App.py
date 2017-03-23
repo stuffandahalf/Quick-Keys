@@ -21,9 +21,11 @@ from serial_scanner import serial_ports
 
 import gi
 gi.require_version('Gtk', '3.0')
-gi.require_version('AppIndicator3', '0.1')
 from gi.repository import Gtk as gtk
-from gi.repository import AppIndicator3 as appindicator
+if platform.system() == 'Linux':
+    gi.require_version('AppIndicator3', '0.1')
+    from gi.repository import AppIndicator3 as appindicator
+    
 
 k = PyKeyboard()
 ser = serial.Serial(None)
@@ -154,18 +156,22 @@ def print_symbol_changes():
     print 'Symbols have been changed to: '
     for i in symbols:
         print symbols[i]
-
-class Tray_Indicator:
+        
+class Tray_Indicator(object):
     opened = True
     def __init__(self):
-        APPINDICATOR_ID = 'Quick-Keys'
-        self.status_icon = appindicator.Indicator.new(APPINDICATOR_ID,
-                                             icon_file,
-                                             appindicator.IndicatorCategory.SYSTEM_SERVICES)
-        self.status_icon.set_status(appindicator.IndicatorStatus.ACTIVE)
-        self.add_icon_menu()
-
-    def add_icon_menu(self):
+        self.APPINDICATOR_ID = 'Quick-Keys'
+        self.icon_menu = None
+        
+    def open_window(self, data):
+        if self.opened == False:
+            self.opened = True
+            window = Editor_Window()
+            
+    def quit_app(self, data):
+        exit()
+        
+    def make_icon_menu(self):
         icon_menu = gtk.Menu()
         
         open_item = gtk.MenuItem('Open Editor')
@@ -176,18 +182,38 @@ class Tray_Indicator:
         quit_item.connect_object('activate', self.quit_app, None)
         icon_menu.append(quit_item)
         
-        open_item.show()
-        quit_item.show()
+        icon_menu.show_all()
+        return icon_menu
+
+class Linux_Tray_Indicator(Tray_Indicator):
+    def __init(self):
+        super(Linux_Tray_Indicator)
+        self.status_icon = appindicator.Indicator.new(APPINDICATOR_ID,
+                                                      icon_file,
+                                                      appindicator.IndicatorCategory.SYSTEM_SERVICES)
+        self.status_icon.set_status(appindicator.IndicatorStatus.ACTIVE)
+        self.right_click_menu()
+        
+    def right_click_menu(self):
+        icon_menu = self.make_icon_menu()
         self.status_icon.set_menu(icon_menu)
 
-    def open_window(self, data):
-        #global opened
-        if self.opened == False:
-            self.opened = True
-            window = Editor_Window()
+class Windows_Tray_Indicator(Tray_Indicator):
+    def __init__(self):
+        super(Windows_Tray_Indicator)
+        self.status_icon = gtk.StatusIcon()
+        self.status_icon.set_from_file(icon_file)
+        #self.status_icon.set_has_tooltip(True)
+        self.status_icon.set_tooltip_text('Quick-Keys')
+        self.status_icon.connect('popup-menu', self.right_click_menu)
     
-    def quit_app(self, data):
-        exit()
+    def right_click_menu(self, icon, button, activate_time):
+        self.icon_menu = self.make_icon_menu()
+        self.icon_menu.popup(None, None, None, self.status_icon, button, activate_time)
+
+class Mac_Tray_Indicator(Tray_Indicator):
+    def __init__(self):
+        super(Mac_Tray_Indicator)
 
 class Editor_Window:
     def __init__(self):                                                 # constructor for Base class
@@ -374,6 +400,12 @@ if __name__ == '__main__':
     else:
         print 'Please set port to launch script'                        # otherwise warn the user
     
-    tray_icon = Tray_Indicator()
+    if platform.system() == 'Linux':
+        tray_icon = Linux_Tray_Indicator()
+    elif platform.system() == 'Windows':
+        tray_icon = Windows_Tray_Indicator()
+    elif platform.system() == 'Darwin':
+        tray_icon = Mac_Tray_Indicator()
+        
     main_window = Editor_Window()                                       # create a window object
     gtk.main()
