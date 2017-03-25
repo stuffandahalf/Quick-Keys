@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
 #source from http://stackoverflow.com/questions/12090503/listing-available-com-ports-with-python
+#Source: serial_scanner.py
 
 import sys
 import glob

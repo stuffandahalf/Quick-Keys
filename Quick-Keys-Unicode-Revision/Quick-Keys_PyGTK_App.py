@@ -9,6 +9,7 @@ import serial
 import platform
 import time
 import os.path
+import io
 from pykeyboard import PyKeyboard
 
 from text_prompt import getText
@@ -36,7 +37,7 @@ test_symbols = {'1' : 'a',            #6 button version
                 '6' : 'f'}
 
 profiles = [Profile('Default', symbols, ser.port),
-            Profile('test', test_symbols, 'test')]
+            Profile('test', test_symbols, ser.port)]
 
 #a dictionary to store the changed symbols
 new_symbols = {}
@@ -45,59 +46,55 @@ for i in symbols:
 
 def main_script():
     while ser.port != None:                                             # while the selected serial port is valid
-        print 'yep'
-        #try:                                                            # try
-        ind = ser.readline().rstrip('\r\n')                         # read the index from the serial port
-        print ind
-        hexval = symbols[ind].encode("unicode_escape")              # encode the index
-        #hexval = repr(symbols[ind])
-        print hexval
-        if hexval[:2] == '\u':                                      # if the value is a hex number
-            if platform.system() == 'Linux':                        # for linux platforms
-                k.press_key('Control_L')                            # press the control
-                k.press_key('Shift_L')                              # the left shift
-                k.tap_key('u')                                      # and the u key
-                k.release_key('Control_L')                          # release the control
-                k.release_key('Shift_L')                            # and shift keys
-                hexval = hexval[2:]                                 # remove the unicode escape character
-                k.type_string(hexval)                               # type the unicode string
-                k.tap_key('Return')                                 # tap the return key
+        try:                                                            # try
+            ind = ser.readline().rstrip('\r\n')                         # read the index from the serial port
+            hexval = symbols[ind].encode("unicode_escape")              # encode the index
+            if hexval[:2] == '\u':                                      # if the value is a hex number
+                if platform.system() == 'Linux':                        # for linux platforms
+                    k.press_key('Control_L')                            # press the control
+                    k.press_key('Shift_L')                              # the left shift
+                    k.tap_key('u')                                      # and the u key
+                    k.release_key('Control_L')                          # release the control
+                    k.release_key('Shift_L')                            # and shift keys
+                    hexval = hexval[2:]                                 # remove the unicode escape character
+                    k.type_string(hexval)                               # type the unicode string
+                    k.tap_key('Return')                                 # tap the return key
+                    
+                elif platform.system() == 'Windows':                    # for windows platforms
+                    pass
+                    
+                elif platform.system() == 'Darwin':                     # for darwin platforms
+                    pass
                 
-            elif platform.system() == 'Windows':                    # for windows platforms
-                pass
-                
-            elif platform.system() == 'Darwin':                     # for darwin platforms
-                pass
-            
-            else:                                                   # for all other platforms
-                print 'Unsupported platform'                        # print unsupported platform
-                
-        else:                                                       # if the given string isnt a unicode character
-            k.type_string(hexval)                                   # just type the string
-        #except:                                                         # except
-        #    print 'nope'
-        #    ser.close()                                                 # close the serial port
-        #    ser.port = None                                             # set the port to None
+                else:                                                   # for all other platforms
+                    print 'Unsupported platform'                        # print unsupported platform
+                    
+            else:                                                       # if the given string isnt a unicode character
+                k.type_string(hexval)                                   # just type the string
+        except:                                                         # except
+            ser.close()                                                 # close the serial port
+            ser.port = None                                             # set the port to None
+
+def load_profile(profile, profile_index):
+    current_profile = profile_index
+    for i in new_symbols:
+        new_symbols[i] = profile.symbols[i]
+    try:
+        ser.port = profile.port
+        ser.open()
+    except:
+        ser.port == None
+    save_preferences()
 
 def save_preferences():
     f = open(pref_file, 'w+')                                           # open the file for writing/creating
     f.write(str(len(profiles)) + '\n')                                  # write the number of profiles to the file
-    #current_profile = Profile('Current', symbols, ser.port)             # make a Profile object for the current settings
-    created = False
-    #for i in range(len(profiles)):                                      # for every profile
-    #    print current_profile == profiles[i]
-    #    if current_profile == profiles[i]:                              # if the symbols and port are the same
-    #        created = True
-    #        f.write(str(i) + '\n\n')                                    # write the index of the current profile
-    #        break                                                       # break out of the loop
-    #if not created:
-    #    f.write(str(0) + '\n\n')
     f.write(str(current_profile) + '\n\n')
     for i in range(len(profiles)):                                      # for every profile
         f.write(profiles[i].name + '\n')                                # write the name + newline
         f.write(str(profiles[i].port) + '\n')                           # write the serial port
         for j in profiles[i].symbols:                                   # write every symbol
-            f.write(str(profiles[i].symbols[j]) + '\n')
+            f.write(str(profiles[i].symbols[j].encode("unicode_escape")) + '\n')
         f.write('\n\n')                                                 # write two newlines
     f.close()                                                           # close the file
 
@@ -105,11 +102,8 @@ def read_preferences():
     profiles = []                                                       # clear the list of profiles
     f = open(pref_file)
     num = f.readline().rstrip('\r\n')
-    #selected_profile = f.readline().rstrip('\r\n')
     current_profile = int(f.readline().rstrip('\r\n'))
-    print current_profile
     f.readline()
-    #f.readline()
     for i in range(int(num)):
         profile_name = f.readline().rstrip('\r\n')
         print profile_name
@@ -123,14 +117,7 @@ def read_preferences():
         profiles.append(new_profile)
         f.readline()
         f.readline()
-    profiles[current_profile].load()
-    #try:
-    #    ser.port = profiles[current_profile].port
-    #    ser.open()
-    #except:
-    #    ser.port = None
-    #print profiles[current_profile].port
-    print ser.port
+    load_profile(profiles[current_profile], current_profile)
     f.close()
 
 def print_serial_change():
@@ -142,13 +129,13 @@ def print_symbol_changes():
         print symbols[i]
         
 class Tray_Indicator(object):
-    opened = True
     def __init__(self):
         self.icon_menu = None
         
     def open_window(self, data):
-        if self.opened == False:
-            self.opened = True
+        global opened
+        if opened == False:
+            opened = not opened
             window = Editor_Window()
             
     def quit_app(self, data):
@@ -231,7 +218,7 @@ class Editor_Window:
         for i in range(len(symbols)):                                       # for every symbol
             self.button.append(gtk.Button(label = symbols[str(i+1)]))       # make a new button object
             self.button[i].set_size_request(button_size[0], button_size[1])     # set the size of the button
-            self.button[i].connect('clicked', self.button_symbols, i)            # bind the button to the test function
+            self.button[i].connect('clicked', self.change_button_symbols, i)            # bind the button to the test function
             layout.put(self.button[i], button_coords[i][0], button_coords[i][1])    # place the button on the layout
             self.button[i].show()                                           # show the button
 
@@ -240,7 +227,7 @@ class Editor_Window:
         self.drop = gtk.ComboBoxText()
         drop_size = (window_width/3*2, window_height/(rows+1)/2)        # the size of the drop down box
         self.drop.set_size_request(drop_size[0], drop_size[1])          # set the size of the drop down
-        self.drop.set_title('Serial Ports')                             # set the title (wip)
+        #self.drop.set_title('Serial Ports')                             # set the title (wip)
         self.ports = serial_ports()                                     # create a list of available ports
         #print self.ports
         #try:
@@ -249,20 +236,24 @@ class Editor_Window:
             #pass
         for i in self.ports:                                            # for every port
             self.drop.append_text(i)                                    # add it to the dropdown
+        if ser.port in self.ports:
+            self.drop.set_active(self.ports.index(ser.port))
         drop_coords = (0, window_height/(rows+1)*rows)                  # the coordinates of the drop
         layout.put(self.drop, drop_coords[0], drop_coords[1])           # place it on the layout
         self.drop.show()                                                # show the drop
     
     def refresh_serial_dropdown(self, widget, data = None):
         for i in range(len(self.ports)):                                # for every port in the current list
-            self.drop.remove_text(0)                                    # remove the values from the dropdown
+            self.drop.remove(0)                                    # remove the values from the dropdown
         self.ports = serial_ports()                                     # refresh the list of ports
         for i in self.ports:                                            # for every new port
             self.drop.append_text(i)                                    # add it to the dropdown
+        if ser.port in self.ports:
+            self.drop.set_active(self.ports.index(ser.port))
         self.clear_symbol_changes()                                     # clear any symbol changes that might've been made
         #print self.ports
         
-    def button_symbols(self, widget, data = None):
+    def change_button_symbols(self, widget, data = None):
         data += 1                                                       # increment the index data by 1
         new_symbols[str(data)] = getText(symbols[str(data)])            # set the new symbol to the value retrieved from the popup
         #print data
@@ -273,8 +264,11 @@ class Editor_Window:
         #print self.drop.get_row_span_column()  
     
     def update_symbols(self):
-        for i in range(len(new_symbols)):                               # for every button
-            self.button[i].set_label(new_symbols[str(i+1)])             # set the label of the button to the new symbol
+        #for i in range(len(new_symbols)):                               # for every button
+        #    self.button[i].set_label(new_symbols[str(i+1)])             # set the label of the button to the new symbol
+        for i in new_symbols:
+            self.button[int(i)-1].set_label(new_symbols[i])
+        
             
     def clear_symbol_changes(self):
         for i in range(len(new_symbols)):                               # for every symbol/button
@@ -316,10 +310,17 @@ class Editor_Window:
         profilemenu = gtk.Menu()
         profilem = gtk.MenuItem("Profiles")
         profilem.set_submenu(profilemenu)
+        
+        def load_profile_bind(widget, i):
+            load_profile(profiles[i], i)
+            self.update_symbols()
+            
         for i in range(len(profiles)):
             menu_item = profiles[i].get_menu_item()
-            #menu_item.connect("activate", load_profile_bind, i)
+            menu_item.connect("activate", load_profile_bind, i)
             profilemenu.append(menu_item)
+        
+        filem.show()
         profilem.show()
         
         menu_bar.append(filem)
@@ -356,10 +357,9 @@ class Editor_Window:
         save_preferences()                                              # write the changes to the preferences file
     
     def close_window(self, widget, e):
-        #global opened
-        #print e
+        global opened
         self.window.destroy
-        Tray_Indicator.opened = False
+        opened = not opened
 
 if __name__ == '__main__':
     

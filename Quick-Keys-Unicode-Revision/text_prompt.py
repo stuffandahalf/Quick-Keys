@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 #source from https://ardoris.wordpress.com/2008/07/05/pygtk-text-entry-dialog/
 #modified and ported to gtk 3.0 by Gregory Norton
+#Source: text_prompt.py
 
 #import gtk
 import gi

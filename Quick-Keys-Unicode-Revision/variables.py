@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-
+#Source: variables.py
 
 from pykeyboard import PyKeyboard
 import serial
@@ -12,6 +12,8 @@ ser = serial.Serial(None)
 
 window_height = 300
 window_width = 300
+
+opened = True
 
 symbols = {'1' : u'π',            #6 button version
            '2' : u'Σ',
