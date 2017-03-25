@@ -139,7 +139,8 @@ class Tray_Indicator(object):
             window = Editor_Window()
             
     def quit_app(self, data):
-        exit()
+        #exit()
+        gtk.main_quit()
         
     def make_icon_menu(self):
         icon_menu = gtk.Menu()
@@ -269,7 +270,6 @@ class Editor_Window:
         for i in new_symbols:
             self.button[int(i)-1].set_label(new_symbols[i])
         
-            
     def clear_symbol_changes(self):
         for i in range(len(new_symbols)):                               # for every symbol/button
             self.button[i].set_label(symbols[str(i+1)])                 # set the button label to the old symbol
@@ -360,6 +360,7 @@ class Editor_Window:
         global opened
         self.window.destroy
         opened = not opened
+        del self
 
 if __name__ == '__main__':
     
@@ -387,5 +388,6 @@ if __name__ == '__main__':
     elif platform.system() == 'Darwin':
         tray_icon = Mac_Tray_Indicator()
         
-    main_window = Editor_Window()                                       # create a window object
+    #main_window = Editor_Window()                                       # create a window object
+    Editor_Window()
     gtk.main()

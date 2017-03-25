@@ -31,6 +31,7 @@ def getText(symbol):
     dialog.run()
     text = entry.get_text()
     dialog.destroy()
+    del dialog
     return text
     
 #if __name__ == '__main__':
