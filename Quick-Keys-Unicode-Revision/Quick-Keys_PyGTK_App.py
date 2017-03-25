@@ -13,6 +13,8 @@ from pykeyboard import PyKeyboard
 
 from text_prompt import getText
 from serial_scanner import serial_ports
+from profile import Profile
+from variables import *
 
 #importing gui components
 #import pygtk
@@ -25,48 +27,16 @@ from gi.repository import Gtk as gtk
 if platform.system() == 'Linux':
     gi.require_version('AppIndicator3', '0.1')
     from gi.repository import AppIndicator3 as appindicator
-    
 
-k = PyKeyboard()
-ser = serial.Serial(None)
+test_symbols = {'1' : 'a',            #6 button version
+                '2' : 'b',
+                '3' : 'c',
+                '4' : 'd',
+                '5' : 'e',
+                '6' : 'f'}
 
-window_height = 300
-window_width = 300
-
-rows = 2         #6 button version
-columns = 3
-
-#opened = False
-
-#rows = 3        #12 button version
-#columns = 4
-
-pref_file = os.path.abspath('Quick-Keys Preferences')
-profile_file = os.path.abspath('Quick-Keys Profiles')
-icon_file = os.path.abspath('icon.png')
-
-#dictionary of symbols corresponding to the arduino
-symbols = {'1' : 'π',          #6 button version
-           '2' : 'Σ',
-           '3' : 'α',
-           '4' : 'β',
-           '5' : 'Δ',
-           '6' : 'Ω'}
-           
-#symbols = {'1' : 'π',           #12 button version
-           #'2' : 'Σ',
-           #'3' : 'α',
-           #'4' : 'β',
-           #'5' : 'Δ',
-           #'6' : 'Ω',
-           #'7' : 'test',
-           #'8' : 'another',
-           #'9' : 'and again',
-           #'10' : 'last one',
-           #'11' : 'ayy',
-           #'12' : 'lmao'}
-
-profiles = [pref_file]
+profiles = [Profile('Default', symbols, ser.port),
+            Profile('test', test_symbols, 'test')]
 
 #a dictionary to store the changed symbols
 new_symbols = {}
@@ -75,78 +45,92 @@ for i in symbols:
 
 def main_script():
     while ser.port != None:                                             # while the selected serial port is valid
-        try:                                                            # try
-            ind = ser.readline().rstrip('\r\n')                         # read the index from the serial port
-            hexval = symbols[ind].encode("unicode_escape")              # encode the index
-            print hexval
-            if hexval[:2] == '\u':                                      # if the value is a hex number
-                if platform.system() == 'Linux':                        # for linux platforms
-                    k.press_key('Control_L')                            # press the control
-                    k.press_key('Shift_L')                              # the left shift
-                    k.tap_key('u')                                      # and the u key
-                    k.release_key('Control_L')                          # release the control
-                    k.release_key('Shift_L')                            # and shift keys
-                    hexval = hexval[2:]                                 # remove the unicode escape character
-                    k.type_string(hexval)                               # type the unicode string
-                    k.tap_key('Return')                                 # tap the return key
-                    
-                elif platform.system() == 'Windows':                    # for windows platforms
-                    pass
-                    
-                elif platform.system() == 'Darwin':                     # for darwin platforms
-                    pass
+        print 'yep'
+        #try:                                                            # try
+        ind = ser.readline().rstrip('\r\n')                         # read the index from the serial port
+        print ind
+        hexval = symbols[ind].encode("unicode_escape")              # encode the index
+        #hexval = repr(symbols[ind])
+        print hexval
+        if hexval[:2] == '\u':                                      # if the value is a hex number
+            if platform.system() == 'Linux':                        # for linux platforms
+                k.press_key('Control_L')                            # press the control
+                k.press_key('Shift_L')                              # the left shift
+                k.tap_key('u')                                      # and the u key
+                k.release_key('Control_L')                          # release the control
+                k.release_key('Shift_L')                            # and shift keys
+                hexval = hexval[2:]                                 # remove the unicode escape character
+                k.type_string(hexval)                               # type the unicode string
+                k.tap_key('Return')                                 # tap the return key
                 
-                else:                                                   # for all other platforms
-                    print 'Unsupported platform'                        # print unsupported platform
-                    
-            else:                                                       # if the given string isnt a unicode character
-                k.type_string(hexval)                                   # just type the string
-        except:                                                         # except
-            ser.close()                                                 # close the serial port
-            ser.port = None                                             # set the port to None
-    
-def save_profiles():
-    f = open(profile_file, 'w+')
-    f.write(pref_file + '\n')
-    for i in profiles:
-        f.write(i + '\n')
-    f.close()
-    
-def read_profiles():
-    f = open(profile_file)
-    pref_file = f.readline().rstrip('\r\n')
-    for line in f:
-        profiles.append(line.rstrip('\r\n'))
-    f.close()
-    
-    
+            elif platform.system() == 'Windows':                    # for windows platforms
+                pass
+                
+            elif platform.system() == 'Darwin':                     # for darwin platforms
+                pass
+            
+            else:                                                   # for all other platforms
+                print 'Unsupported platform'                        # print unsupported platform
+                
+        else:                                                       # if the given string isnt a unicode character
+            k.type_string(hexval)                                   # just type the string
+        #except:                                                         # except
+        #    print 'nope'
+        #    ser.close()                                                 # close the serial port
+        #    ser.port = None                                             # set the port to None
+
 def save_preferences():
-    f = open(pref_file, 'w+')                                           # open the preference file
-    for i in symbols:                                                   # for every symbol
-        f.write(symbols[i] + '\n')                                      # write them to the file
-    if ser.port != None:                                                # if the current serial port is valid
-        f.write(ser.port + '\n')                                        # write it to the file
-    else:                                                               # otherwise
-        f.write('\n')                                                   # write a newline character
-    f.close()
-    
+    f = open(pref_file, 'w+')                                           # open the file for writing/creating
+    f.write(str(len(profiles)) + '\n')                                  # write the number of profiles to the file
+    #current_profile = Profile('Current', symbols, ser.port)             # make a Profile object for the current settings
+    created = False
+    #for i in range(len(profiles)):                                      # for every profile
+    #    print current_profile == profiles[i]
+    #    if current_profile == profiles[i]:                              # if the symbols and port are the same
+    #        created = True
+    #        f.write(str(i) + '\n\n')                                    # write the index of the current profile
+    #        break                                                       # break out of the loop
+    #if not created:
+    #    f.write(str(0) + '\n\n')
+    f.write(str(current_profile) + '\n\n')
+    for i in range(len(profiles)):                                      # for every profile
+        f.write(profiles[i].name + '\n')                                # write the name + newline
+        f.write(str(profiles[i].port) + '\n')                           # write the serial port
+        for j in profiles[i].symbols:                                   # write every symbol
+            f.write(str(profiles[i].symbols[j]) + '\n')
+        f.write('\n\n')                                                 # write two newlines
+    f.close()                                                           # close the file
+
 def read_preferences():
-    global ser                                                          # define the ser variable as global
-    f = open(pref_file)                                                 # open the preference file
-    for i in symbols:                                                   # for every symbol
-        sym = f.readline().rstrip('\r\n')                               # read the symbol from the file
-        symbols[i] = sym                                                # assign the symbol to the dictionary of symbols
-        new_symbols[i] = sym                                            # and the new one
-        print sym
-        
-    new_port = f.readline().rstrip('\r\n')                              # read the new port from the file
-    print new_port
-    if new_port != '' and new_port in serial_ports():                   # if the new port is a valid port
-        ser = serial.Serial(new_port)                                   # set the serial port to it
-        print_serial_change()                                           # print the changes
-    else:                                                               # otherwise
-        print 'Error setting serial port. Try again later.'             # print a warning
-        ser = serial.Serial(None)                                       # change the port to None
+    profiles = []                                                       # clear the list of profiles
+    f = open(pref_file)
+    num = f.readline().rstrip('\r\n')
+    #selected_profile = f.readline().rstrip('\r\n')
+    current_profile = int(f.readline().rstrip('\r\n'))
+    print current_profile
+    f.readline()
+    #f.readline()
+    for i in range(int(num)):
+        profile_name = f.readline().rstrip('\r\n')
+        print profile_name
+        profile_port = f.readline().rstrip('\r\n')
+        print profile_port
+        profile_symbols = {}
+        for j in symbols:
+            profile_symbols[j] = f.readline().rstrip('\r\n')
+        print profile_symbols
+        new_profile = Profile(profile_name, profile_symbols, profile_port)
+        profiles.append(new_profile)
+        f.readline()
+        f.readline()
+    profiles[current_profile].load()
+    #try:
+    #    ser.port = profiles[current_profile].port
+    #    ser.open()
+    #except:
+    #    ser.port = None
+    #print profiles[current_profile].port
+    print ser.port
     f.close()
 
 def print_serial_change():
@@ -216,9 +200,8 @@ class Mac_Tray_Indicator(Tray_Indicator):
         super(Mac_Tray_Indicator)
 
 class Editor_Window:
-    def __init__(self):                                                 # constructor for Base class
-        #self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)                   # make a new window object
-        self.window = gtk.Window()
+    def __init__(self):                                                 # constructor for the Editor_Window class
+        self.window = gtk.Window()                                      # make a new window object
         self.window.set_default_size(window_width, window_height)       # set the default and
         self.window.set_size_request(window_width, window_height)       # minimum size of the window
         self.window.show()                                              # show the window
@@ -259,7 +242,7 @@ class Editor_Window:
         self.drop.set_size_request(drop_size[0], drop_size[1])          # set the size of the drop down
         self.drop.set_title('Serial Ports')                             # set the title (wip)
         self.ports = serial_ports()                                     # create a list of available ports
-        print self.ports
+        #print self.ports
         #try:
             #self.drop.set_active(self.ports.index(ser.port))
         #except:
@@ -333,6 +316,10 @@ class Editor_Window:
         profilemenu = gtk.Menu()
         profilem = gtk.MenuItem("Profiles")
         profilem.set_submenu(profilemenu)
+        for i in range(len(profiles)):
+            menu_item = profiles[i].get_menu_item()
+            #menu_item.connect("activate", load_profile_bind, i)
+            profilemenu.append(menu_item)
         profilem.show()
         
         menu_bar.append(filem)
@@ -350,17 +337,18 @@ class Editor_Window:
     def apply_changes(self, widget, data = None):
         print 'function to apply changes'
         new_port = self.get_drop_text()                                 # get new serial port from drop down
+        #print new_port
         if new_port != None and new_port in serial_ports():             # if port is valid
             ser.close()                                                 # close the current one
             ser.port = None                                             # set serial port to None to close current thread
-            print new_port                                              
             ser.port = new_port                                         # set the serial port to the new port
             ser.open()                                                  # reopen the serial port
             threading.Thread(target = main_script).start()              # start a new script thread
+            profiles[current_profile].port = new_port
             print_serial_change()                                       # print the changes made
         else:
             print 'invalid Serial port selected, port not changed'      # if invalid port selected, print message and proceed
-            
+        print ser.port    
         for i in new_symbols:                                           # for every symbol
             symbols[i] = new_symbols[i]                                 # update the value
         self.update_symbols()
@@ -377,14 +365,6 @@ if __name__ == '__main__':
     
     #gtk.threads_init()                                                  # initialize threads in gtk
     t1 = threading.Thread(target = main_script)                         # create a new thread for the main script
-    
-    #check if profiles exist
-    if os.path.isfile(profile_file):
-        read_profiles()
-        print 'Profile file read'
-    else:
-        save_profiles()
-        print 'Profile file saved'
     
     #check if preferences file exists
     if os.path.isfile(pref_file):                                       # if the preferences file exists

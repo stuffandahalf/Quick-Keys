@@ -25,6 +25,7 @@ while True:
             #if connected:
 
             ind = ser.readline().rstrip('\r\n')
+            print symbols[ind]
             hexval = symbols[ind].encode("unicode_escape")
             print hexval
             if hexval[:2] == '\u':
