@@ -29,6 +29,7 @@ if platform.system() == 'Linux':
     gi.require_version('AppIndicator3', '0.1')
     from gi.repository import AppIndicator3 as appindicator
 
+
 test_symbols = {'1' : 'a',            #6 button version
                 '2' : 'b',
                 '3' : 'c',
@@ -100,7 +101,7 @@ def save_preferences():
 
 def read_preferences():
     profiles = []                                                       # clear the list of profiles
-    f = open(pref_file)
+    f = open(pref_file, 'r')
     num = f.readline().rstrip('\r\n')
     current_profile = int(f.readline().rstrip('\r\n'))
     f.readline()
@@ -175,7 +176,7 @@ class Windows_Tray_Indicator(Tray_Indicator):
         super(Windows_Tray_Indicator)
         self.status_icon = gtk.StatusIcon()
         self.status_icon.set_from_file(icon_file)
-        #self.status_icon.set_has_tooltip(True)
+        self.status_icon.set_has_tooltip(True)
         self.status_icon.set_tooltip_text('Quick-Keys')
         self.status_icon.connect('popup-menu', self.right_click_menu)
     
@@ -183,7 +184,7 @@ class Windows_Tray_Indicator(Tray_Indicator):
         self.icon_menu = self.make_icon_menu()
         self.icon_menu.popup(None, None, None, self.status_icon, button, activate_time)
 
-class Mac_Tray_Indicator(Tray_Indicator):
+class Mac_Tray_Indicator(Windows_Tray_Indicator):
     def __init__(self):
         super(Mac_Tray_Indicator)
 
@@ -194,7 +195,8 @@ class Editor_Window:
         self.window.set_size_request(window_width, window_height)       # minimum size of the window
         self.window.show()                                              # show the window
         self.window.set_title('Quick-Keys')                             # set the title of the window
-        self.window.set_icon_from_file(icon_file)                       # set the icon for the window
+        if not platform.system() == 'Darwin':
+            self.window.set_icon_from_file(icon_file)                       # set the icon for the window
         
         layout = gtk.Layout()                                           # create a new gtk layout object
         self.window.add(layout)                                         # add the layout to the window
@@ -380,14 +382,14 @@ if __name__ == '__main__':
         t1.start()                                                      # start the script thread
     else:
         print 'Please set port to launch script'                        # otherwise warn the user
-        
+    
     if platform.system() == 'Linux':
         tray_icon = Linux_Tray_Indicator()
     elif platform.system() == 'Windows':
         tray_icon = Windows_Tray_Indicator()
     elif platform.system() == 'Darwin':
         tray_icon = Mac_Tray_Indicator()
-        
+
     #main_window = Editor_Window()                                       # create a window object
     Editor_Window()
     gtk.main()
