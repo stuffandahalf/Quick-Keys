@@ -112,12 +112,13 @@ def read_preferences():
         print profile_port
         profile_symbols = {}
         for j in symbols:
-            profile_symbols[j] = f.readline().rstrip('\r\n')
+            profile_symbols[j] = f.readline().rstrip('\r\n').decode("unicode-escape")
         print profile_symbols
         new_profile = Profile(profile_name, profile_symbols, profile_port)
         profiles.append(new_profile)
         f.readline()
         f.readline()
+        print ''
     load_profile(profiles[current_profile], current_profile)
     f.close()
 
