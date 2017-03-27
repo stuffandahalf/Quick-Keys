@@ -364,7 +364,6 @@ class Editor_Window:
         opened = not opened
         del self
 
-@profile
 def main(args):
     #gtk.threads_init()                                                  # initialize threads in gtk
     t1 = threading.Thread(target = main_script)                         # create a new thread for the main script
