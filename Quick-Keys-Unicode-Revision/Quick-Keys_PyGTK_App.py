@@ -364,8 +364,8 @@ class Editor_Window:
         opened = not opened
         del self
 
-if __name__ == '__main__':
-    
+@profile
+def main(args):
     #gtk.threads_init()                                                  # initialize threads in gtk
     t1 = threading.Thread(target = main_script)                         # create a new thread for the main script
     
@@ -393,3 +393,7 @@ if __name__ == '__main__':
     #main_window = Editor_Window()                                       # create a window object
     Editor_Window()
     gtk.main()
+
+if __name__ == '__main__':
+    import sys
+    sys.exit(main(sys.argv))
