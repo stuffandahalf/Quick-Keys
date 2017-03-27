@@ -7,7 +7,7 @@
 import threading
 import serial
 import platform
-import time
+#import time
 import os.path
 import io
 from pykeyboard import PyKeyboard
@@ -77,9 +77,13 @@ def main_script():
             ser.port = None                                             # set the port to None
 
 def load_profile(profile, profile_index):
+    global current_profile
+    global new_symbols
+    global ser
     current_profile = profile_index
     for i in new_symbols:
         new_symbols[i] = profile.symbols[i]
+        symbols[i] = profile.symbols[i]
     try:
         ser.port = profile.port
         ser.open()
@@ -88,6 +92,7 @@ def load_profile(profile, profile_index):
     save_preferences()
 
 def save_preferences():
+    global current_profile
     f = open(pref_file, 'w+')                                           # open the file for writing/creating
     f.write(str(len(profiles)) + '\n')                                  # write the number of profiles to the file
     f.write(str(current_profile) + '\n\n')
@@ -100,12 +105,13 @@ def save_preferences():
     f.close()                                                           # close the file
 
 def read_preferences():
+    global current_profile
     profiles = []                                                       # clear the list of profiles
     f = open(pref_file, 'r')
-    num = f.readline().rstrip('\r\n')
+    num = int(f.readline().rstrip('\r\n'))
     current_profile = int(f.readline().rstrip('\r\n'))
     f.readline()
-    for i in range(int(num)):
+    for i in range(num):
         profile_name = f.readline().rstrip('\r\n')
         print profile_name
         profile_port = f.readline().rstrip('\r\n')
@@ -120,6 +126,7 @@ def read_preferences():
         f.readline()
         print ''
     load_profile(profiles[current_profile], current_profile)
+    #print symbols
     f.close()
 
 def print_serial_change():
@@ -317,6 +324,7 @@ class Editor_Window:
         def load_profile_bind(widget, i):
             load_profile(profiles[i], i)
             self.update_symbols()
+            self.apply_changes(None)
             
         for i in range(len(profiles)):
             menu_item = profiles[i].get_menu_item()
@@ -363,7 +371,6 @@ class Editor_Window:
         global opened
         self.window.destroy
         opened = not opened
-        del self
 
 def main(args):
     #gtk.threads_init()                                                  # initialize threads in gtk
