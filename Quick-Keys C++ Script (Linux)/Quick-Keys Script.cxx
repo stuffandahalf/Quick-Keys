@@ -4,13 +4,19 @@
 
 using namespace std;
 
-//char buffer[64];
+void main_script(char *portname);
 
 int main(int argc, char **argv)
 {
-    int ser = open("/dev/ttyUSB0", O_RDONLY);
-    //char byte[0x1000];
-    char byte;
+    main_script("/dev/ttyUSB0");
+	return 0;
+}
+
+void main_script(string portname)
+{
+    portname = portname.c_str();
+    int ser = open(portname, O_RDONLY);
+    char byte[2];
     while(true)
     {
         int size = read(ser, &byte, 1);
@@ -18,6 +24,4 @@ int main(int argc, char **argv)
             cout << byte;
         }
     }
-	return 0;
 }
-

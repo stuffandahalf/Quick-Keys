@@ -28,6 +28,8 @@ from gi.repository import Gtk as gtk
 if platform.system() == 'Linux':
     gi.require_version('AppIndicator3', '0.1')
     from gi.repository import AppIndicator3 as appindicator
+elif platform.system() == 'Darwin':
+    import rumps
 
 
 test_symbols = {'1' : 'a',            #6 button version
@@ -148,8 +150,8 @@ class Tray_Indicator(object):
             window = Editor_Window()
             
     def quit_app(self, data):
-        #exit()
-        gtk.main_quit()
+        exit()
+        #gtk.main_quit()
         
     def make_icon_menu(self):
         icon_menu = gtk.Menu()
@@ -192,9 +194,26 @@ class Windows_Tray_Indicator(Tray_Indicator):
         self.icon_menu = self.make_icon_menu()
         self.icon_menu.popup(None, None, None, self.status_icon, button, activate_time)
 
-class Mac_Tray_Indicator(Windows_Tray_Indicator):
-    def __init__(self):
-        super(Mac_Tray_Indicator)
+if platform.system() == 'Darwin':
+    class Mac_Tray_Indicator(rumps.App):
+        def __init__(self):
+            super(Mac_Tray_Indicator, self).__init__('Quick-Keys', icon_file)
+            self.menu = ['Open Editor', 'Quit App']
+            
+        @rumps.clicked('Open Editor')
+        def open_editor(self, _):
+            global opened
+            if opened == False:
+                opened = not opened
+                window = Editor_Window()
+            
+        @rumps.clicked('Quit_App')
+        def quit_app(self, _):
+            exit()
+    
+#class Mac_Tray_Indicator(Windows_Tray_Indicator):
+#    def __init__(self):
+#        super(Mac_Tray_Indicator)
 
 class Editor_Window:
     def __init__(self):                                                 # constructor for the Editor_Window class
