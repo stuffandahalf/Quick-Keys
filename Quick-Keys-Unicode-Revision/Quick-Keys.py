@@ -19,10 +19,8 @@ symbols = {'1' : u'π',            #6 button version
 
 def main_script():
     while ser.port != None:                                             # while the selected serial port is valid
-        print 'yep'
         try:                                                            # try
             ind = ser.readline().rstrip('\r\n')                         # read the index from the serial port
-            print ind
             hexval = symbols[ind].encode("unicode_escape")              # encode the index
             #hexval = repr(symbols[ind])
             print hexval
@@ -49,7 +47,6 @@ def main_script():
             else:                                                       # if the given string isnt a unicode character
                 k.type_string(hexval)                                   # just type the string
         except:                                                         # except
-            print 'nope'
             ser.close()                                                 # close the serial port
             ser.port = None                                             # set the port to None
 
