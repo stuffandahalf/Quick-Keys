@@ -1,0 +1,23 @@
+OBJS = Quick-Keys\ Script.o pykeyboard_function.o
+CC = g++
+DEBUG = -g
+CFLAGS = -Wall -c $(DEBUG)
+LFLAGS = -Wall $(DEBUG)
+
+Quick-Keys\ Script: $(OBJS) 
+	$(CC) $(LFLAGS) $(OBJS) `python2-config --cflags --ldflags` -o Quick-Keys\ Script
+	
+Quick-Keys\ Script.o: Quick-Keys\ Script.cxx variables.h pykeyboard_function.h
+	$(CC) $(CFLAGS) Quick-Keys\ Script.cxx
+	
+pykeyboard_function.o: pykeyboard_function.c 
+	gcc `python2-config --cflags --ldflags` -c pykeyboard_function.c
+	
+pykeyboard_function.c: pykeyboard_function.pyx
+	python setup.py build_ext --inplace
+	
+pykeyboard_function.h: pykeyboard_function.pyx
+	python setup.py build_ext --inplace
+
+clean:
+	\rm *.o *~ Quick-Keys\ Script
