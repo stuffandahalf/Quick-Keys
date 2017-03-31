@@ -1,38 +1,52 @@
 #include <iostream>
-#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 
 #include "variables.h"
 
-#ifdef __linux__
-    #include <X11/Xlib.h>
-    #include <X11/keysym.h>
-    #include <X11/extensions/XTest.h>
-#endif
+#include <X11/Xlib.h>
+#include <X11/keysym.h>
+#include <X11/extensions/XTest.h>
 
 using namespace std;
 
+/* EXTERNAL VARIABLES */
+extern string symbols[];
+extern const char* port_name;
+
+/* PROTOTYPES */
+void load_initial_symbols();
 void main_script(const char *portname);
 
+/* MAIN FUNCTION */
 int main(int argc, char **argv)
 {
-    const char *serial_port = "/dev/ttyUSB0";
-    //pthread_create(
+    load_initial_symbols();
     main_script(serial_port);
     
 	return 0;
 }
 
+/* LOAD INITIAL SYMBOLS */
+void load_initial_symbols()
+{
+    string new_symbols[BUTTONNUM] = {"\u03c0",      //pi
+                                     "\u03b1",      //alpha
+                                     "\u03a3",      //sigma
+                                     "\u0394",      //delta
+                                     "\u03b2",      //beta
+                                     "\u03a9"};     //omega
+                      
+    for(int i = 0; i < BUTTONNUM; i++)
+    {
+        symbols[i] = new_symbols[i];
+    }
+}
+
+/* MAIN SCRIPT */
 void main_script(const char *portname)
 {
-    string symbols[6] = {"\u03c0", "\u03b1", "\u03a3", "\u0394", "\u03b2", "\u03a9"};
-    /*for(int i = 0; i < 6; i++)
-    {
-        cout << symbols[i];
-        cout << '\n';
-    }
-    cout << '\n';*/
     int ser = open(portname, O_RDONLY);
     char byte[1];
     while(true)

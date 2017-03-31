@@ -1,1 +1,12 @@
-//extern std::string symbols[6] = {"\u03c0", "\u03b1", "\u03a3", "\u0394", "\u03b2", "\u03a9"};
+#ifndef VARIABLES_H
+#define VARIABLES_H
+#endif
+
+#include <iostream>
+
+#define BUTTONNUM 6
+
+using namespace std;
+
+const char *serial_port = "/dev/ttyUSB0";
+string symbols[BUTTONNUM];
