@@ -1,14 +1,19 @@
 #include <iostream>
+#include <cstdio>
+#include <string.h>
 #include <iomanip>
 #include <stdlib.h>
 #include <unistd.h>
+#include <linux/uinput.h>
+#include <linux/input.h>
 #include <fcntl.h>
 
 #include "variables.h"
 
-#include <X11/Xlib.h>
+/*#include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <X11/extensions/XTest.h>
+*/
 
 using namespace std;
 
@@ -17,7 +22,7 @@ using namespace std;
 //extern const char* serial_port;
 
 /* PROTOTYPES */
-void type_symbol(wchar_t symbol);
+int type_symbol(string symbol);
 void load_initial_symbols();
 void main_script(const char *portname);
 void save_preferences();
@@ -27,7 +32,7 @@ int main(int argc, char **argv)
 {
     //type_symbol(symbols[0]);
     //type_symbol(testsym);
-    type_symbol(testchar);
+    //type_symbol(testsym);
     //type_symbol("π");
     
     profile test;
@@ -44,39 +49,61 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-void type_symbol(wchar_t symbol)
+/* KEYBOARD EMULATION */
+int type_symbol(string symbol)
 {
-    Display *display;
-    unsigned int keycode;
-    display = XOpenDisplay(NULL);
-
-    //KeySym sym = XStringToKeysym(symbol.c_str());
-    //cout << sym;
-    //keycode = XKeysymToKeycode(display, sym);
-    //cout << keycode << '\n';
-    cout << XK_Greek_pi << '\n';
-    //cout << XK_A << '\n';
-    cout << (int)symbol << '\n';
-    //UnicodeString::ToInt(symbol);
-    //const char *symarr = symbol.c_str();
-    sleep(5);
-    //int i = 0;
-    //while(symarr[i] != '\0')
-    //{
-        //cout << XK_Greek_pi << '\n';
-        //keycode = XKeysymToKeycode(display, (int)'a');
-        //keycode = XKeysymToKeycode(display, XK_A);
-        //keycode = XKeysymToKeycode(display, (int)symarr[i]);
-    //KeySym sym = XStringToKeysym(symbol);
-    //keycode = XKeysymToKeycode(display, sym);
-    //keycode = XKeysymToKeycode(display, XK_Greek_pi);
-    //keycode = XKeysymToKeycode(display, XK_A);
-    //cout << keycode << '\n';
-    //XTestFakeKeyEvent(display, keycode, True, 0);
-    //XTestFakeKeyEvent(display, keycode, False, 0);
-        //i++;
-    //}
-    XFlush(display);
+    const char *symbol_array = symbol.c_str();
+    
+    int fd;
+    struct uinput_user_dev uidev;
+    struct input_event ev;
+    
+    fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
+    if(fd < 0)
+    {
+        return EXIT_FAILURE;
+    }
+    else
+    {
+        
+        ioctl(fd, UI_SET_EVBIT, EV_KEY);
+        ioctl(fd, UI_SET_KEYBIT, KEY_D);
+        
+        
+        memset(&uidev, 0, sizeof(uidev));
+        
+        snprintf(uidev.name, UINPUT_MAX_NAME_SIZE, "uinput-sample");
+        uidev.id.bustype = BUS_USB;
+        uidev.id.vendor = 0x1234;
+        uidev.id.product = 0xfedc;
+        uidev.id.version = 1;
+        
+        write(fd, &uidev, sizeof(uidev));
+        ioctl(fd, UI_DEV_CREATE);
+        sleep(.5);
+        
+        memset(&ev, 0, sizeof(ev));
+        ev.type = EV_KEY;
+        ev.code = KEY_D;
+        ev.value = 1;
+        write(fd, &ev, sizeof(ev));
+        
+        memset(&ev, 0, sizeof(ev));
+        ev.type = EV_KEY;
+        ev.code = KEY_D;
+        ev.value = 0;
+        write(fd, &ev, sizeof(ev));
+        
+        memset(&ev, 0, sizeof(struct input_event));
+        ev.type = EV_SYN;
+        ev.code = 0;
+        ev.value = 0;
+        write(fd, &ev, sizeof(struct input_event));
+        
+        ioctl(fd, UI_DEV_DESTROY);
+        close(fd);
+        return EXIT_SUCCESS;
+    }
 }
 
 /* LOAD INITIAL SYMBOLS */
@@ -109,6 +136,7 @@ void main_script(const char *portname)
             if(i >= 0)
             {
                 cout << symbols[i];
+                //type_symbol(symbols[i]);
                 cout << '\n';
             }
         }
