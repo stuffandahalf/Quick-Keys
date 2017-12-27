@@ -7,7 +7,7 @@ using namespace std;
 
 #define BUTTONNUM 6
 
-const char *serial_port = "/dev/ttyUSB0";
+const char *serial_port = "/dev/ttyUSB1";
 string symbols[BUTTONNUM] = {"\u03c0",      //pi
                              "\u03b1",      //alpha
                              "\u03a3",      //sigma

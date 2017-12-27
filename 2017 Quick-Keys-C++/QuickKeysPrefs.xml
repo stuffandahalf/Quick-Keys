@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<quickkeys>
+    <profile>
+        <name>Default</name>
+        <port>/dev/ttyUSB0</port>
+        <symbols>
+            <1>π</1>
+            <2>Σ</2>
+            <3>α</3>
+            <4>β</4>
+            <5>Δ</5>
+            <6>Ω</6>
+        </symbols>
+    </profile>
+</quickkeys>

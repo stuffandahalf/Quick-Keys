@@ -17,7 +17,7 @@ void main_script(char *port_name);
 
 int main(int argc, char **argv)
 {
-    char *port_name = "/dev/ttyUSB0";
+    char *port_name = "/dev/ttyUSB1";
     //char *port_name = "test";
 	main_script(port_name);
 	return 0;
