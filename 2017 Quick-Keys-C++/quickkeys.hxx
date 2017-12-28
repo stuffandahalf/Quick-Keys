@@ -30,7 +30,7 @@ class QuickKeys
     QuickKeys(Profile prof);
     
     
-    //Desctructor
+    //Destructor
     ~QuickKeys();
 };
 
