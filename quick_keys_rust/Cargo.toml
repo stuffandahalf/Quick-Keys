@@ -4,3 +4,4 @@ version = "0.1.0"
 authors = ["Stuff5 <freezedown@hotmail.com>"]
 
 [dependencies]
+serialport = "2.0.0"
