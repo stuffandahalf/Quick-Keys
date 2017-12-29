@@ -1,0 +1,6 @@
+[package]
+name = "quick_keys_rust"
+version = "0.1.0"
+authors = ["Stuff5 <freezedown@hotmail.com>"]
+
+[dependencies]
