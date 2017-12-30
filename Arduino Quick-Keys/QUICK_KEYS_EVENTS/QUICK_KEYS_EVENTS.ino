@@ -21,6 +21,7 @@ char cha;
 
 void setup() {
   Serial.begin(9600);
+  //Serial.print("QK");
   keypad.addEventListener(keypadEvent);
 }
 

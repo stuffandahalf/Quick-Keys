@@ -5,3 +5,4 @@ authors = ["Stuff5 <freezedown@hotmail.com>"]
 
 [dependencies]
 serialport = "2.0.0"
+enigo = "0.0.11"
