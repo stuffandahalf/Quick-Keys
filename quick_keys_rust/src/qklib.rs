@@ -36,7 +36,7 @@ pub fn enigo_test() {
     enigo.key_sequence("πΣ");
 }
 
-pub fn emit_string(string: &str) {
-    let mut enigo = Enigo::new();
+pub fn emit_string(enigo: &mut Enigo, string: &str) {
+    //let mut enigo = Enigo::new();
     enigo.key_sequence(string);
 }
