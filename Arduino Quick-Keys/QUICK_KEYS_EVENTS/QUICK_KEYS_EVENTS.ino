@@ -33,7 +33,8 @@ void loop() {
   //KeyState state = keypad.getState();
   //Serial.println(KeyState(keypad.getState()));
   if(KeyState(keypad.getState() == 2)) {
-    Serial.println(cha);
+    //Serial.println(cha);
+    Serial.print(cha);
     delay(50);
   }
 }
@@ -41,7 +42,8 @@ void loop() {
 void keypadEvent(KeypadEvent key) {
   switch (KeyState(keypad.getState())) {  
     case PRESSED:
-      Serial.println(key);
+      //Serial.println(key);
+      Serial.print(key);
       cha = key;
 
     case RELEASED:
