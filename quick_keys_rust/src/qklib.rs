@@ -1,5 +1,7 @@
 use serialport;
 use std::io::{self, Write};
+use enigo::{Enigo, KeyboardControllable};
+
 
 pub fn serial_test() {
     let mut port_name = "".to_string();
@@ -27,4 +29,9 @@ pub fn serial_test() {
     } else {
         println!("Error: Port '{}' not available", &port_name);
     }
+}
+
+pub fn enigo_test() {
+    let mut enigo = Enigo::new();
+    enigo.key_sequence("πΣ");
 }
