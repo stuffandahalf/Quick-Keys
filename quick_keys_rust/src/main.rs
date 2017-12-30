@@ -5,17 +5,12 @@ mod profile;
 
 use std::io::{self, Write};
 
-fn unbox<T>(value: Box<T>) -> T {
-    *value
-}
-
 fn main() {
     //println!("Hello, world!");
     let mut port_name = "".to_string();
     if let Ok(mut ports) = serialport::available_ports() {
         println!("{:?}", ports[0]);
-        let ref port = &ports[0];
-        port_name = port.port_name;
+        port_name = ports[0].clone().port_name;
     } else {
         println!("Failed to detect any ports");
     }
