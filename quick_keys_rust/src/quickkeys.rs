@@ -35,8 +35,30 @@ impl<'a> QuickKeys<'a> {
     
     pub fn main_script(&self) -> i32 {
         let mut enigo = Enigo::new();
+        let mut serial_buf: Vec<u8> = vec![0; 4];
+        if let Ok(mut port) = serialport::open(self.get_port()) {
+            loop {
+                if let Ok(bytes) = port.read(serial_buf.as_mut_slice()) {
+                    //println!("{}", bytes);
+                    //println!("{:?}", serial_buf);
+                    
+                    let i: usize = serial_buf[0] as usize - 49;
+                    let sym = self.get_profile().get_symbol(i);
+                    //println!("{}", self.get_profile().get_symbol(i));
+                    enigo.key_sequence(sym);
+                }
+            }
+        }
+        else {
+            println!("Error: Port '{}' not available", self.get_port());
+            return 1;
+        }
         
         return 0;
+    }
+    
+    pub fn get_port(&self) -> &str {
+        return &self.port;
     }
     
     pub fn get_profile(&self) -> &Profile {
