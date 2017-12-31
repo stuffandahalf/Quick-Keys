@@ -21,10 +21,6 @@ pub fn serial_test() {
                 //io::stdout().write_all(&serial_buf[..t]).unwrap();
                 println!("{:?}", serial_buf);
             }
-            /*match port.read(serial_buf.as_mut_slice()) {
-                Ok(t) => io::stdout().write_all(&serial_buf[..t]).unwrap(),
-                Err(err) => println!("Error encountered: {:?}", err),
-            }*/
         }
     } else {
         println!("Error: Port '{}' not available", &port_name);
@@ -37,6 +33,5 @@ pub fn enigo_test() {
 }
 
 pub fn emit_string(enigo: &mut Enigo, string: &str) {
-    //let mut enigo = Enigo::new();
     enigo.key_sequence(string);
 }
