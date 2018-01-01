@@ -1,0 +1,1 @@
+/home/ubuntu/Desktop/Quick-Keys/quick_keys_rust/target/release/quick_keys_rust: /home/ubuntu/Desktop/Quick-Keys/quick_keys_rust/src/quickkeys.rs /home/ubuntu/Desktop/Quick-Keys/quick_keys_rust/src/main.rs /home/ubuntu/Desktop/Quick-Keys/quick_keys_rust/src/profile.rs

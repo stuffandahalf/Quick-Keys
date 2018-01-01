@@ -8,6 +8,7 @@ mod profile;
 const KEYS: usize = 6;
 
 fn main() {
+    //let profiles: Vec<profile::Profile> = Vec::new();
     let qkdev = quickkeys::QuickKeys::new();
     qkdev.main_script();
 }
