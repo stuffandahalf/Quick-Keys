@@ -59,6 +59,13 @@ impl<'a> QuickKeys<'a> {
         return 0;
     }
     
+    fn port_exists(&self) -> bool {
+        let Ok(ports) = serialport::available_ports();  //add match statement
+        let port_names: Vec<&str> = ports.iter().map(|s| &*s.port_name).collect();
+        println!("{:?}", port_names);
+        return true;
+    }
+    
     pub fn get_port(&self) -> &str {
         return &self.port;
     }
