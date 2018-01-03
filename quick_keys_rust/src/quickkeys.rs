@@ -28,25 +28,13 @@ impl<'a> QuickKeys<'a> {
         //let port_names: Vec<String> = ports.iter().map(|d| d.port_name).collect();
         //println!("{:?}", ports);
         if let Ok(mut port) = serialport::open(self.get_port()) {
-            //while !self.exit {
-            while !exit {
+            while self.port_exists() {
+            //while !exit {
             //while ports.contains(self.port) {
                 if let Ok(bytes) = port.read(serial_buf.as_mut_slice()) {
                     let i: usize = serial_buf[0] as usize - 49;
                     let sym = self.get_profile().get_symbol(i);
                     enigo.key_sequence(sym);
-                }
-                
-                if let Ok(mut ports) = serialport::available_ports() {
-                    let port_names: Vec<&str> = ports.iter().map(|p| &*p.port_name).collect();
-                    println!("{:?}", port_names);
-                    /*if port_names.contains(self.port) {
-                        exit = true;
-                        //return 1;
-                    }*/
-                } else {
-                    exit = true;
-                    //return 1;
                 }
             }
             println!("Device disconnected");
@@ -60,10 +48,12 @@ impl<'a> QuickKeys<'a> {
     }
     
     fn port_exists(&self) -> bool {
-        let Ok(ports) = serialport::available_ports();  //add match statement
-        let port_names: Vec<&str> = ports.iter().map(|s| &*s.port_name).collect();
-        println!("{:?}", port_names);
-        return true;
+        if let Ok(ports) = serialport::available_ports() {
+            let port_names: Vec<&str> = ports.iter().map(|s| &*s.port_name).collect();
+            return port_names.contains(&self.get_port());
+        }
+        println!("QuickKeys on port {} disconnected", self.get_port());
+        return false;
     }
     
     pub fn get_port(&self) -> &str {
