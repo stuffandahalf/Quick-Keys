@@ -8,7 +8,6 @@ use profile::Profile;
 pub struct QuickKeys<'a> {
     profile: Profile<'a>,
     port: &'a str,
-    exit: bool,
 }
 
 impl<'a> QuickKeys<'a> {
@@ -24,13 +23,9 @@ impl<'a> QuickKeys<'a> {
         let mut exit = false;
         let mut enigo = Enigo::new();
         let mut serial_buf: Vec<u8> = vec![0; 4];
-        //let Ok(mut ports) = serialport::available_ports()/*.iter().map(|d| d.port).collect()*/;
-        //let port_names: Vec<String> = ports.iter().map(|d| d.port_name).collect();
-        //println!("{:?}", ports);
         if let Ok(mut port) = serialport::open(self.get_port()) {
             while self.port_exists() {
             //while !exit {
-            //while ports.contains(self.port) {
                 if let Ok(bytes) = port.read(serial_buf.as_mut_slice()) {
                     let i: usize = serial_buf[0] as usize - 49;
                     let sym = self.get_profile().get_symbol(i);
