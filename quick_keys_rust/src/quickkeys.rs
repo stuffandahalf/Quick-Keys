@@ -22,20 +22,30 @@ impl<'a> QuickKeys<'a> {
         let mut enigo = Enigo::new();
         let mut serial_buf: Vec<u8> = vec![0; 4];
         if let Ok(mut port) = serialport::open(self.get_port()) {
-            while self.port_exists() {
+            //while self.port_exists() {
             //while !exit {
-                if let Ok(bytes) = port.read(serial_buf.as_mut_slice()) {
+            loop {
+                /*if let Ok(bytes) = port.read(serial_buf.as_mut_slice()) {
                     let i: usize = serial_buf[0] as usize - 49;
                     let sym = self.get_profile().get_symbol(i);
                     enigo.key_sequence(sym);
+                }*/
+                match port.read(serial_buf.as_mut_slice()) {
+                    Ok(bytes) => println!("{}", bytes),
+                    Err(err) => println!("{:?}", err),
                 }
             }
             println!("Device disconnected");
+            
         }
         else {
             println!("Error: Port '{}' not available", self.get_port());
             return 1;
         }
+        /*match serialport::open(self.get_port()) {
+            Ok(port) => println!("{:?}", port);
+            Err(err) => println!("{:?}", err);
+        }*/
         
         return 0;
     }
