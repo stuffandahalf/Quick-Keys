@@ -1,6 +1,6 @@
 use serialport;
 use enigo::{Enigo, KeyboardControllable};
-use std::string::String;
+//use std::string::String;
 
 use profile::Profile;
 
@@ -15,12 +15,10 @@ impl<'a> QuickKeys<'a> {
         return QuickKeys {
             profile: Profile::new(),
             port: "/dev/ttyUSB0",
-            exit: false,
         };
     }
     
     pub fn main_script(&self) -> i32 {
-        let mut exit = false;
         let mut enigo = Enigo::new();
         let mut serial_buf: Vec<u8> = vec![0; 4];
         if let Ok(mut port) = serialport::open(self.get_port()) {
