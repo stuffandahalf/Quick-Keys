@@ -11,11 +11,27 @@ pub struct QuickKeys<'a> {
 }
 
 impl<'a> QuickKeys<'a> {
+    #[cfg(target_os = "linux")]
     pub fn new() -> QuickKeys<'a> {
         return QuickKeys {
             profile: Profile::new(),
             port: "/dev/ttyUSB0",
         };
+    }
+    
+    #[cfg(target_os = "windows")]
+    pub fn new() -> QuickKeys<'a> {
+        return QuickKeys {
+            profile: Profile::new(),
+            port: "COM4",
+        };
+    }
+    
+    pub fn new_from(port_name: &'a str) -> QuickKeys<'a> {
+        return QuickKeys {
+            profile: Profile::new(),
+            port: port_name,
+        }
     }
     
     pub fn main_script(&self) -> i32 {
