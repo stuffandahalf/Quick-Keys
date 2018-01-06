@@ -1,28 +1,40 @@
 extern crate serialport;
 extern crate enigo;
 
-mod quickkeys;
+//mod quickkeystest;
 mod profile;
+mod quickkeys;
+mod qkdev;
 //mod qklib;
+
+use std::thread;
 
 const KEYS: usize = 6;
 
 fn main() {
-    //let profiles: Vec<profile::Profile> = Vec::new();
+    let mut profiles: Vec<profile::Profile> = Vec::new();
+    profiles.push(profile::Profile::new());
+    println!("{:?}", profiles[0]);
+    
+    //let mut devices: Vec<qkdev::QKDev> = Vec::new();
     
     if let Ok(ports) = serialport::available_ports() {
-        for p in ports {
+        let port_names: Vec<&str> = ports.iter().map(|p| &*p.port_name).collect();
+        //let port_names: Vec<std::string::String> = ports.iter().map(|p| format!("{:?} by {:?} on {}", p.product, p.manufacturer, &*p.port_name)).collect();
+        println!("Available serial ports");
+        for p in port_names {
             println!("{:?}", p);
         }
+        println!("");
     }
     
     /* Initial default ports for every OS */
     #[cfg(target_os = "linux")]
-    let qkdev = quickkeys::QuickKeys::new_on("/dev/ttyUSB0");
+    let mut qk = qkdev::QKDev::new("/dev/ttyUSB0");
     #[cfg(target_os = "windows")]
-    let qkdev = quickkeys::QuickKeys::new_on("COM4");
+    let qk = qkdev::QKDev::new("COM4");
     #[cfg(target_os = "macos")]
-    let qkdev = quickkeys::QuickKeys::new_on("");
+    let qk = qkdev::QKDev::new("");
     
-    qkdev.main_script();
+    //qk.test();
 }

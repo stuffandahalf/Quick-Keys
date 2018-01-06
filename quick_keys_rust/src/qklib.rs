@@ -1,4 +1,8 @@
-use serialport;
+use quickkeys::QuickKeys;
+use std::thread::JoinHandle;
+use std::thread;
+
+/*use serialport;
 use std::io::{self, Write};
 use enigo::{Enigo, KeyboardControllable};
 use profile::Profile;
@@ -34,4 +38,13 @@ pub fn enigo_test() {
 
 pub fn emit_string(enigo: &mut Enigo, string: &str) {
     enigo.key_sequence(string);
+}*/
+
+pub fn start_qk_thread(qkdev: &QuickKeys) {
+    let local_dev = qkdev.clone();
+    let handle = thread::spawn(|| {
+        qkdev.start();
+    });
+    handle.join();
+    //return &local_dev;
 }

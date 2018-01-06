@@ -1,19 +1,18 @@
 use serialport;
 use enigo::{Enigo, KeyboardControllable};
 use std::path::Path;
-use std::string::String;
+//use std::string::String;
 use std::thread;
 
 use profile::Profile;
 
-#[derive(Debug, Clone)]
-pub struct QuickKeys {
-    profile: Profile,
-    port: String,
-    exit: bool,
+#[derive(Debug, Clone, Copy)]
+pub struct QuickKeys<'a> {
+    profile: Profile<'a>,
+    port: &'a str,
 }
 
-impl QuickKeys {
+impl<'a> QuickKeys<'a> {
     /*#[cfg(target_os = "linux")]
     pub fn new() -> QuickKeys<'a> {
         return QuickKeys {
@@ -30,24 +29,21 @@ impl QuickKeys {
         };
     }*/
     
-    pub fn new_on(port_name: &str) -> QuickKeys {
+    pub fn new_on(port_name: &'a str) -> QuickKeys<'a> {
         return QuickKeys {
             profile: Profile::new(),
-            port: String::from(port_name),
-            exit: false,
+            port: port_name,
         }
     }
     
-    pub fn start(&/*mut */self) {
-        //self.exit = false;
+    pub fn main_script(&self) -> i32 {
         let mut enigo = Enigo::new();
         let mut serial_buf: Vec<u8> = vec![0; 4];
-        if let Ok(mut port) = serialport::open(self.port()) {
-            println!("Connected to QuickKeys on port {}", self.port());
-            while self.port_exists() && !self.exit {
+        if let Ok(mut port) = serialport::open(self.get_port()) {
+            while self.port_exists() {
                 if let Ok(_bytes) = port.read(serial_buf.as_mut_slice()) {
                     let i: usize = serial_buf[0] as usize - 49;
-                    let sym = self.profile().get_symbol(i);
+                    let sym = self.get_profile().get_symbol(i);
                     enigo.key_sequence(sym);
                 }
                 /*match port.read(serial_buf.as_mut_slice()) {
@@ -59,12 +55,11 @@ impl QuickKeys {
             
         }
         else {
-            println!("Error: Port '{}' not available", self.port());
+            println!("Error: Port '{}' not available", self.get_port());
+            return 1;
         }
-    }
-    
-    pub fn stop(&mut self) {
-        self.exit = true;
+        
+        return 0;
     }
     
     /*fn port_exists(&self) -> bool {
@@ -78,7 +73,7 @@ impl QuickKeys {
     
     #[cfg(target_os = "linux")]
     fn port_exists(&self) -> bool {
-        return Path::new(self.port()).exists();
+        return Path::new(self.get_port()).exists();
     }
     
     #[cfg(target_os = "macos")]
@@ -91,16 +86,12 @@ impl QuickKeys {
         return true;
     }
     
-    pub fn port(&self) -> &str {
-        return &*self.port;
+    pub fn get_port(&self) -> &str {
+        return &self.port;
     }
     
-    pub fn profile(&self) -> &Profile {
+    pub fn get_profile(&self) -> &Profile {
         return &self.profile;
-    }
-    
-    pub fn set_symbol(&mut self, index: usize, symbol: &str) {
-        self.profile.set_symbol(index, symbol);
     }
 }
 
