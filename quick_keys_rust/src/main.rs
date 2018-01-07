@@ -7,14 +7,12 @@ mod quickkeys;
 mod qkdev;
 //mod qklib;
 
-use std::thread;
-
 const KEYS: usize = 6;
 
 fn main() {
     let mut profiles: Vec<profile::Profile> = Vec::new();
     profiles.push(profile::Profile::new());
-    println!("{:?}", profiles[0]);
+    //println!("{:?}", profiles[0]);
     
     //let mut devices: Vec<qkdev::QKDev> = Vec::new();
     
@@ -37,4 +35,5 @@ fn main() {
     let qk = qkdev::QKDev::new("");
     
     //qk.test();
+    //println!("{}", qk.device().profile().get_symbol(2));
 }

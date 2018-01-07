@@ -35,7 +35,7 @@ impl QuickKeys {
             profile: Profile::new(),
             port: String::from(port_name),
             exit: false,
-        }
+        };
     }
     
     pub fn start(&/*mut */self) {

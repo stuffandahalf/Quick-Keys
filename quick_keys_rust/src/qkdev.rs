@@ -1,6 +1,5 @@
 use quickkeys::QuickKeys;
 use std::thread;
-use std::sync::Arc;
 
 #[derive(Debug)]
 pub struct QKDev {
@@ -8,9 +7,8 @@ pub struct QKDev {
 }
 
 impl QKDev {
-    
     pub fn new(port: &str) -> QKDev {
-        let qk = QKDev {
+        let mut qk = QKDev {
             device: QuickKeys::new_on(port),
         };
         qk.start();
@@ -18,7 +16,7 @@ impl QKDev {
     }
     
     pub fn start(&self) {
-        let local_dev = self.device.clone();
+        let local_dev = (&self.device).clone();
         let handle = thread::spawn(move || {
             local_dev.start();
         });
@@ -26,10 +24,10 @@ impl QKDev {
     }
     
     pub fn test(&mut self) {
-        self.device.set_symbol(2, ":^)");
+        self.device().set_symbol(2, ":^)");
     }
     
-    pub fn device(&self) -> &QuickKeys {
-        return &self.device;
+    pub fn device(&mut self) -> &mut QuickKeys {
+        return &mut self.device;
     }
 }
