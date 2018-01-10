@@ -1,20 +1,26 @@
 extern crate serialport;
 extern crate enigo;
+extern crate gtk;
 
 //mod quickkeystest;
 mod profile;
 mod quickkeys;
 mod qkdev;
 //mod qklib;
+mod editor;
 
 const KEYS: usize = 6;
+
+use std::thread;
+use std::sync::mpsc;
+use std::time;
 
 fn main() {
     let mut profiles: Vec<profile::Profile> = Vec::new();
     profiles.push(profile::Profile::new());
     //println!("{:?}", profiles[0]);
     
-    //let mut devices: Vec<qkdev::QKDev> = Vec::new();
+    let mut devices: Vec<qkdev::QKDev> = Vec::new();
     
     if let Ok(ports) = serialport::available_ports() {
         let port_names: Vec<&str> = ports.iter().map(|p| &*p.port_name).collect();
@@ -28,12 +34,24 @@ fn main() {
     
     /* Initial default ports for every OS */
     #[cfg(target_os = "linux")]
-    let mut qk = qkdev::QKDev::new("/dev/ttyUSB0");
+    //let mut qk = qkdev::QKDev::new("/dev/ttyUSB0");
+    devices.push(qkdev::QKDev::new("/dev/ttyUSB0"));
     #[cfg(target_os = "windows")]
-    let qk = qkdev::QKDev::new("COM4");
+    //let qk = qkdev::QKDev::new("COM4");
+    devices.push(qkdev::QKDev::new("COM4"));
     #[cfg(target_os = "macos")]
-    let qk = qkdev::QKDev::new("");
+    //let qk = qkdev::QKDev::new("");
+    devices.push(qkdev::QKDev::new(""));
     
-    //qk.test();
-    //println!("{}", qk.device().profile().get_symbol(2));
+    let e = editor::EditorWindow::new();
+    gtk::main();
+    
+    for mut qk in devices {
+        let _ = qk.stop();
+        /*let mut b = qk.stop();
+        b.start();
+        thread::sleep(time::Duration::from_millis(5000));
+        b.stop();*/
+        //qk = qk.stop();
+    }
 }
