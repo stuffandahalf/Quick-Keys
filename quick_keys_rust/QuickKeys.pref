@@ -1,23 +1,40 @@
+1
 2
-0
 
+#Profiles:
 Default
-None
-\u03c0
-\u03b1
-\u03a3
-\u0394
-\u03b2
-\u03a9
+π
+Σ
+α
+β
+Δ
+Ω
 
-
-test
-None
+Test
 a
-c
 b
-e
+c
 d
+e
 f
 
+#Devices
+/dev/ttyUSB0
+Default
 
+#formatted as follows:
+#profiles_size
+#devices_size
+#
+#Profiles:
+#name
+#sym0
+#sym1
+#sym2
+#sym3
+#sym4
+#sym5
+#
+#Devices:
+#device_port
+#profile_name

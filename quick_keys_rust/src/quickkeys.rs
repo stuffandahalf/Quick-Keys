@@ -22,6 +22,7 @@ impl QuickKeys {
     }
     
     pub fn start(&self, rx: Receiver<bool>) {
+        //println!("here");
         //self.exit = false;
         let mut exit = false;
         let mut enigo = Enigo::new();

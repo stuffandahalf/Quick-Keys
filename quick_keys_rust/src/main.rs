@@ -1,24 +1,28 @@
 extern crate serialport;
 extern crate enigo;
 extern crate gtk;
+//extern crate xml_lib;
+//extern crate serde;
+//extern crate serde_json;
 
 //mod quickkeystest;
 mod profile;
 mod quickkeys;
+mod preferences;
 mod qkdev;
 //mod qklib;
 mod editor;
 
 const KEYS: usize = 6;
+const PREF_FILE: &str = "QuickKeys.pref";
 
 use std::thread;
 use std::sync::mpsc;
 use std::time;
 
 fn main() {
-    let mut profiles: Vec<profile::Profile> = Vec::new();
+    /*let mut profiles: Vec<profile::Profile> = Vec::new();
     profiles.push(profile::Profile::new());
-    //println!("{:?}", profiles[0]);
     
     let mut devices: Vec<qkdev::QKDev> = Vec::new();
     
@@ -46,15 +50,10 @@ fn main() {
     let e = editor::EditorWindow::new();
     gtk::main();
     
-    for mut qk in devices {
-        //let _ = qk.stop();
-        /*let mut b = qk.stop();
-        b.start();
-        thread::sleep(time::Duration::from_millis(5000));
-        b.stop();*/
-        //qk = qk.stop();
+    for mut qk in &mut devices {
         qk.stop();
-        qk.start();
-        //println!("here");
-    }
+    }*/
+    //xml_lib::xml::test();
+    let pref = preferences::Preferences::new();
+    println!("{:?}", pref);
 }
