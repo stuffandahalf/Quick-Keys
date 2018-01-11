@@ -1,6 +1,7 @@
 use quickkeys::QuickKeys;
 use std::thread;
 use std::sync::mpsc::{channel, Sender, Receiver};
+use std::mem;
 
 #[derive(Debug)]
 pub struct QKDev {
@@ -42,21 +43,21 @@ impl QKDev {
         self.init(rx);
     }
     
-    /*pub fn stop(&mut self) {
+    pub fn stop(&mut self) {
         if let Some(tx) = self.tx.clone() {
-            let _res = tx.send(true);
+            let _tx_res = tx.send(true);
             self.tx = None;
-            if let Some(ref handle) = self.handle {
-                handle.join();
+            let handle_opt = mem::replace(&mut self.handle, None);
+            if let Some(handle) = handle_opt {
+                let _hande_res = handle.join();
             }
-            self.handle = None;
         }
         else {
             println!("tx is not initialized");
         }
-    }*/
+    }
     
-    pub fn stop(mut self) -> QKDev {
+    /*pub fn stop(mut self) -> QKDev {
         if let Some(tx) = self.tx.clone() {
             let _res = tx.send(true);
             self.tx = None;
@@ -69,7 +70,7 @@ impl QKDev {
             println!("tx is not initialized");
         }
         return QKDev::new_from(self.move_device());
-    }
+    }*/
     
     pub fn device(&mut self) -> &mut QuickKeys {
         return &mut self.device;

@@ -11,31 +11,13 @@ use profile::Profile;
 pub struct QuickKeys {
     profile: Profile,
     port: String,
-    //exit: bool,
 }
 
 impl QuickKeys {
-    /*#[cfg(target_os = "linux")]
-    pub fn new() -> QuickKeys<'a> {
-        return QuickKeys {
-            profile: Profile::new(),
-            port: "/dev/ttyUSB0",
-        };
-    }
-    
-    #[cfg(target_os = "windows")]
-    pub fn new() -> QuickKeys<'a> {
-        return QuickKeys {
-            profile: Profile::new(),
-            port: "COM4",
-        };
-    }*/
-    
     pub fn new_on(port_name: &str) -> QuickKeys {
         return QuickKeys {
             profile: Profile::new(),
             port: String::from(port_name),
-            //exit: false,
         };
     }
     
@@ -43,7 +25,6 @@ impl QuickKeys {
         //self.exit = false;
         let mut exit = false;
         let mut enigo = Enigo::new();
-        println!("here");
         let mut serial_buf: Vec<u8> = vec![0; 4];
         if let Ok(mut port) = serialport::open(self.port()) {
             println!("Connected to QuickKeys on port {}", self.port());
@@ -56,40 +37,14 @@ impl QuickKeys {
                 if let Ok(val) = rx.try_recv() {
                     exit = val;
                 }
-                /*match rx.try_recv() {
-                    Ok(val) => println!("{}", val),
-                    Err(err) => println!("{:?}", err),
-                }*/
-                //println!("{:?}", rx.recv());
-                /*match port.read(serial_buf.as_mut_slice()) {
-                    Ok(bytes) => println!("{}", bytes),
-                    Err(err) => println!("{:?}", err),
-                }*/
             }
-            println!("Device disconnected");
-            
+            //println!("Device disconnected");
+            println!("Thread terminated");
         }
         else {
             println!("Error: Port '{}' not available", self.port());
         }
     }
-    
-    pub fn test(&self, rx: Receiver<bool>) {
-        println!("{}", rx.recv().unwrap());
-    }
-    
-    /*pub fn stop(&mut self) {
-        self.exit = true;
-    }*/
-    
-    /*fn port_exists(&self) -> bool {
-        if let Ok(ports) = serialport::available_ports() {
-            let port_names: Vec<&str> = ports.iter().map(|s| &*s.port_name).collect();
-            return port_names.contains(&self.get_port());
-        }
-        println!("QuickKeys on port {} disconnected", self.get_port());
-        return false;
-    }*/
     
     #[cfg(target_os = "linux")]
     fn port_exists(&self) -> bool {

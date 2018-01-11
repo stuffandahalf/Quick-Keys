@@ -47,11 +47,14 @@ fn main() {
     gtk::main();
     
     for mut qk in devices {
-        let _ = qk.stop();
+        //let _ = qk.stop();
         /*let mut b = qk.stop();
         b.start();
         thread::sleep(time::Duration::from_millis(5000));
         b.stop();*/
         //qk = qk.stop();
+        qk.stop();
+        qk.start();
+        //println!("here");
     }
 }
