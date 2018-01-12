@@ -14,7 +14,7 @@ mod qkdev;
 mod editor;
 
 const KEYS: usize = 6;
-const PREF_FILE: &str = "QuickKeys.pref";
+const PREF_FILE: &str = "../resources/QuickKeys.pref";
 
 use std::thread;
 use std::sync::mpsc;
@@ -54,6 +54,8 @@ fn main() {
         qk.stop();
     }*/
     //xml_lib::xml::test();
-    let pref = preferences::Preferences::new();
+    
+    let mut pref = preferences::Preferences::new();
     println!("{:?}", pref);
+    pref.load_prefs();
 }
