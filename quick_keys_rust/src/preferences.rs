@@ -63,11 +63,27 @@ impl Preferences {
                     //println!("{:?}", new_prof);
                     self.profiles.push(new_prof);
                 }
+                iter.next();
+                for _ in 0..devices {
+                    QuickKeys::new();
+                    /*match iter.next() {
+                        Some(val) => 
+                    }*/
+                }
             }
             else {
                 println!("{}", FILE_OPEN_ERR);
             }
         }
+    }
+    
+    pub fn find_profile(&self, name: String) -> Option<Profile> {
+        for i in 0..self.profiles.len() {
+            if self.profiles[i].name() == name {
+                return Some(self.profiles[i].clone());
+            }
+        }
+        return None;
     }
     
     //fn set_var(&mut self, var: &mut String

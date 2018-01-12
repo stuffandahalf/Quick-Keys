@@ -14,6 +14,13 @@ pub struct QuickKeys {
 }
 
 impl QuickKeys {
+    pub fn new() -> QuickKeys {
+        return QuickKeys {
+            profile: Profile::new(),
+            port: String::new(),
+        }
+    }
+    
     pub fn new_on(port_name: &str) -> QuickKeys {
         return QuickKeys {
             profile: Profile::new(),
@@ -68,6 +75,10 @@ impl QuickKeys {
     
     pub fn profile(&self) -> &Profile {
         return &self.profile;
+    }
+    
+    pub fn set_profile(&mut self, new_prof: Profile) {
+        self.profile = new_prof;
     }
     
     pub fn set_symbol(&mut self, index: usize, symbol: &str) {

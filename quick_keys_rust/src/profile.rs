@@ -37,6 +37,9 @@ impl Profile {
         self.name = name;
     }
     
+    pub fn name(&self) -> &String {
+        return &self.name;
+    
     pub fn get_symbol(&self, i: usize) -> &str {
         return &*self.symbols[i];
     }
