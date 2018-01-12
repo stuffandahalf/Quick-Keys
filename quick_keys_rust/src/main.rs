@@ -58,4 +58,5 @@ fn main() {
     let mut pref = preferences::Preferences::new();
     println!("{:?}", pref);
     pref.load_prefs();
+    println!("{:?}", pref);
 }
