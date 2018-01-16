@@ -7,7 +7,7 @@ use std::sync::mpsc::Receiver;
 
 use profile::Profile;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QuickKeys {
     profile: Profile,
     port: String,

@@ -2,8 +2,11 @@ extern crate serialport;
 extern crate enigo;
 extern crate gtk;
 //extern crate xml_lib;
-//extern crate serde;
-//extern crate serde_json;
+
+#[macro_use]
+extern crate serde_derive;
+extern crate serde;
+extern crate serde_json;
 
 //mod quickkeystest;
 mod profile;
@@ -14,7 +17,8 @@ mod qkdev;
 mod editor;
 
 const KEYS: usize = 6;
-const PREF_FILE: &str = "../resources/QuickKeys.pref";
+//const PREF_FILE: &str = "../resources/QuickKeys.pref";
+const PREF_FILE: &str = "/home/ubuntu/Desktop/QuickKeys.pref";
 
 use std::thread;
 use std::sync::mpsc;
@@ -56,7 +60,8 @@ fn main() {
     //xml_lib::xml::test();
     
     let mut pref = preferences::Preferences::new();
-    println!("{:?}", pref);
-    pref.load_prefs();
-    println!("{:?}", pref);
+    pref.write_prefs();
+    //println!("{:?}", pref);
+    //pref.load_prefs();
+    //println!("{:?}", pref);
 }

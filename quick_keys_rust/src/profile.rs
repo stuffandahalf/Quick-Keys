@@ -1,7 +1,7 @@
 use KEYS;
 use std::string::String;
 
-#[derive(Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Profile {
     name: String,
     symbols: [String; KEYS],

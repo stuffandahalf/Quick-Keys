@@ -3,6 +3,7 @@ use quickkeys::QuickKeys;
 use KEYS;
 use PREF_FILE;
 
+use serde_json;
 use std::string::String;
 use std::path::Path;
 use std::fs::File;
@@ -11,7 +12,7 @@ use std::io::prelude::*;
 static EOF_ERR: &str = "Error: Unexpected EOF";
 static FILE_OPEN_ERR: &str = "Error: Failed to open preference file";
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Preferences {
     profiles: Vec<Profile>,
     devices: Vec<QuickKeys>,
@@ -27,7 +28,7 @@ impl Preferences {
         return p;
     }
     
-    pub fn load_prefs(&mut self) {
+    /*pub fn load_prefs(&mut self) {
         if Path::new(PREF_FILE).exists() {
             self.profiles = Vec::new();
             self.devices = Vec::new();
@@ -75,6 +76,19 @@ impl Preferences {
                 println!("{}", FILE_OPEN_ERR);
             }
         }
+    }*/
+    
+    pub fn load_prefs(&mut self) {
+        match File::open(PREF_FILE) {
+            Ok(mut file) => {
+                let mut json_str = String::new();
+                file.read_to_string(&mut json_str);
+                let data: Preferences = serde_json::from_str(&*json_str).unwrap();
+                self.profiles = data.profiles().clone();
+                self.devices = data.devices().clone();
+            },
+            Err(err) => println!("{}", err),
+        }
     }
     
     pub fn find_profile(&self, name: String) -> Option<Profile> {
@@ -89,6 +103,21 @@ impl Preferences {
     //fn set_var(&mut self, var: &mut String
     
     pub fn write_prefs(&self) {
-        
+        match File::create(PREF_FILE) {
+            Ok(mut file) => {
+                let json_str = serde_json::to_string(self).unwrap();
+                println!("{}", json_str);
+                file.write_all(&*json_str.as_bytes());
+            },
+            Err(err) => println!("{:?}", err),
+        }
+    }
+    
+    pub fn profiles(&self) -> &Vec<Profile> {
+        return &self.profiles;
+    }
+    
+    pub fn devices(&self) -> &Vec<QuickKeys> {
+        return &self.devices;
     }
 }
