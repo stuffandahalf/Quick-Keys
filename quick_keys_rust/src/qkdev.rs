@@ -57,30 +57,15 @@ impl QKDev {
         }
     }
     
-    /*pub fn stop(mut self) -> QKDev {
-        if let Some(tx) = self.tx.clone() {
-            let _res = tx.send(true);
-            self.tx = None;
-            if let Some(handle) = self.handle {
-                let _res2 = handle.join();
-            }
-            self.handle = None;
-        }
-        else {
-            println!("tx is not initialized");
-        }
-        return QKDev::new_from(self.move_device());
-    }*/
-    
     pub fn device(&self) -> &QuickKeys {
         return &self.device;
     }
     
-    fn move_device(self) -> QuickKeys {
+    /*fn move_device(self) -> QuickKeys {
         return self.device;
-    }
+    }*/
     
-    pub fn handle(&self) -> &Option<thread::JoinHandle<()>> {
+    /*pub fn handle(&self) -> &Option<thread::JoinHandle<()>> {
         return &self.handle;
-    }
+    }*/
 }

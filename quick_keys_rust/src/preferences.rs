@@ -40,13 +40,24 @@ impl Preferences {
         match File::open(PREF_FILE) {
             Ok(mut file) => {
                 let mut json_str = String::new();
-                file.read_to_string(&mut json_str);
+                let _ = file.read_to_string(&mut json_str);
                 let data: Preferences = serde_json::from_str(&*json_str).unwrap();
                 self.profiles = data.profiles().clone();
                 self.devices = data.devices().clone();
                 println!("Preferences loaded from disk");
             },
             Err(err) => println!("{}", err),
+        }
+    }
+    
+    pub fn write_prefs(&self) {
+        match File::create(PREF_FILE) {
+            Ok(mut file) => {
+                let json_str = serde_json::to_string(self).unwrap();
+                let _ = file.write_all(&*json_str.as_bytes());
+                println!("Preference saved");
+            },
+            Err(err) => println!("{:?}", err),
         }
     }
     
@@ -57,17 +68,6 @@ impl Preferences {
             }
         }
         return None;
-    }
-    
-    pub fn write_prefs(&self) {
-        match File::create(PREF_FILE) {
-            Ok(mut file) => {
-                let json_str = serde_json::to_string(self).unwrap();
-                file.write_all(&*json_str.as_bytes());
-                println!("Preference file written");
-            },
-            Err(err) => println!("{:?}", err),
-        }
     }
     
     pub fn profiles(&self) -> &Vec<Profile> {

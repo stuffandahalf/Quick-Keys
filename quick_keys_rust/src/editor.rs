@@ -16,7 +16,7 @@ impl EditorWindow {
             window: Window::new(WindowType::Toplevel),
         };
         EditorWindow::win_init(&mut ew.window);
-        
+        gtk::main();
         return Ok(ew);
     }
     
