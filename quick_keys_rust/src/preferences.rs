@@ -1,5 +1,6 @@
 use profile::Profile;
 use quickkeys::QuickKeys;
+use qkdev::QKDev;
 use KEYS;
 use PREF_FILE;
 
@@ -24,59 +25,16 @@ impl Preferences {
             profiles: Vec::new(),
             devices: Vec::new(),
         };
-        p.profiles.push(Profile::new());
+        
+        if Path::new(PREF_FILE).exists() {
+            p.load_prefs();
+        }
+        else {
+            p.profiles.push(Profile::new());
+            p.write_prefs();
+        }
         return p;
     }
-    
-    /*pub fn load_prefs(&mut self) {
-        if Path::new(PREF_FILE).exists() {
-            self.profiles = Vec::new();
-            self.devices = Vec::new();
-            let mut profiles: usize = 0;
-            let mut devices: usize = 0;
-            
-            if let Ok(mut file) = File::open(PREF_FILE) {
-                let mut pref = String::new();
-                file.read_to_string(&mut pref);
-                //println!("{}", pref);
-                let mut iter = pref.split_whitespace();
-                match iter.next() {
-                    Some(val) => profiles = val.parse().unwrap(),
-                    None => println!("{}", EOF_ERR),
-                }
-                match iter.next() {
-                    Some(val) => devices = val.parse().unwrap(),
-                    None => println!("{}", EOF_ERR),
-                }
-                iter.next();
-                for _ in 0..profiles {
-                    let mut new_prof = Profile::new();
-                    match iter.next() {
-                        Some(val) => new_prof.set_name(String::from(val)),
-                        None => println!("{}", EOF_ERR),
-                    }
-                    for i in 0..KEYS {
-                        match iter.next() {
-                            Some(val) => new_prof.set_symbol(i, val),
-                            None => println!("{}", EOF_ERR),
-                        }
-                    }
-                    //println!("{:?}", new_prof);
-                    self.profiles.push(new_prof);
-                }
-                iter.next();
-                for _ in 0..devices {
-                    QuickKeys::new();
-                    /*match iter.next() {
-                        Some(val) => 
-                    }*/
-                }
-            }
-            else {
-                println!("{}", FILE_OPEN_ERR);
-            }
-        }
-    }*/
     
     pub fn load_prefs(&mut self) {
         match File::open(PREF_FILE) {
@@ -86,6 +44,7 @@ impl Preferences {
                 let data: Preferences = serde_json::from_str(&*json_str).unwrap();
                 self.profiles = data.profiles().clone();
                 self.devices = data.devices().clone();
+                println!("Preferences loaded from disk");
             },
             Err(err) => println!("{}", err),
         }
@@ -100,14 +59,12 @@ impl Preferences {
         return None;
     }
     
-    //fn set_var(&mut self, var: &mut String
-    
     pub fn write_prefs(&self) {
         match File::create(PREF_FILE) {
             Ok(mut file) => {
                 let json_str = serde_json::to_string(self).unwrap();
-                println!("{}", json_str);
                 file.write_all(&*json_str.as_bytes());
+                println!("Preference file written");
             },
             Err(err) => println!("{:?}", err),
         }
@@ -119,5 +76,9 @@ impl Preferences {
     
     pub fn devices(&self) -> &Vec<QuickKeys> {
         return &self.devices;
+    }
+    
+    pub fn reset_devices(&mut self, devices: &mut Vec<QKDev>) {
+        self.devices = devices.iter().map(|d| d.device().clone()).collect();
     }
 }

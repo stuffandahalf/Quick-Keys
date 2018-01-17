@@ -18,19 +18,22 @@ mod editor;
 
 const KEYS: usize = 6;
 //const PREF_FILE: &str = "../resources/QuickKeys.pref";
-const PREF_FILE: &str = "/home/ubuntu/Desktop/QuickKeys.pref";
+const PREF_FILE: &str = "/home/ubuntu/Desktop/github_projects/QuickKeys.pref";
 
 use std::thread;
 use std::sync::mpsc;
 use std::time;
 
 fn main() {
-    /*let mut profiles: Vec<profile::Profile> = Vec::new();
-    profiles.push(profile::Profile::new());
+    //let mut profiles: Vec<profile::Profile> = Vec::new();
+    //profiles.push(profile::Profile::new());
+    let mut pref = preferences::Preferences::new();
     
-    let mut devices: Vec<qkdev::QKDev> = Vec::new();
+    //let mut devices: Vec<qkdev::QKDev> = Vec::new();
+    let mut devices: Vec<qkdev::QKDev> = pref.devices().iter().map(|d| qkdev::QKDev::new_from(d)).collect();
+    println!("DEVICES FROM PREFS: {:?}", devices);
     
-    if let Ok(ports) = serialport::available_ports() {
+    /*if let Ok(ports) = serialport::available_ports() {
         let port_names: Vec<&str> = ports.iter().map(|p| &*p.port_name).collect();
         //let port_names: Vec<std::string::String> = ports.iter().map(|p| format!("{:?} by {:?} on {}", p.product, p.manufacturer, &*p.port_name)).collect();
         println!("Available serial ports");
@@ -56,12 +59,13 @@ fn main() {
     
     for mut qk in &mut devices {
         qk.stop();
-    }*/
+    }
     //xml_lib::xml::test();
     
-    let mut pref = preferences::Preferences::new();
+    //pref.write_prefs();
+    //println!("{:?}", pref);
+    pref.load_prefs();
+    println!("{:?}", pref);*/
+    pref.reset_devices(&mut devices);
     pref.write_prefs();
-    //println!("{:?}", pref);
-    //pref.load_prefs();
-    //println!("{:?}", pref);
 }

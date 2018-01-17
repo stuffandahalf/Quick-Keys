@@ -22,9 +22,9 @@ impl QKDev {
         return qk;
     }
     
-    pub fn new_from(device: QuickKeys) -> QKDev {
+    pub fn new_from(device: &QuickKeys) -> QKDev {
         return QKDev {
-            device: device,
+            device: device.clone(),
             handle: None,
             tx: None,
         };
@@ -72,8 +72,8 @@ impl QKDev {
         return QKDev::new_from(self.move_device());
     }*/
     
-    pub fn device(&mut self) -> &mut QuickKeys {
-        return &mut self.device;
+    pub fn device(&self) -> &QuickKeys {
+        return &self.device;
     }
     
     fn move_device(self) -> QuickKeys {
