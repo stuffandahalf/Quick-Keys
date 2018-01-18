@@ -50,14 +50,11 @@ fn main() {
     devices.push(qkdev::QKDev::new(""));*/
     
     let _e = editor::EditorWindow::new();
-    //gtk::main();
     
     for mut qk in &mut devices {
         qk.stop();
     }
     
-    /*pref.load_prefs();
-    println!("{:?}", pref);*/
     pref.reset_devices(&mut devices);
     pref.write_prefs();
 }

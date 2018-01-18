@@ -21,7 +21,7 @@ impl EditorWindow {
     }
     
     fn win_init(window: &mut Window) {
-        window.set_title("EditorWindow");
+        window.set_title("QuickKeys");
         //window.
         window.show_all();
         
