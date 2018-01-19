@@ -7,9 +7,9 @@ extern crate serde_derive;
 extern crate serde;
 extern crate serde_json;
 
-//mod quickkeystest;
 mod profile;
 mod quickkeys;
+//mod quickkeystest;
 mod preferences;
 mod qkdev;
 //mod qklib;
@@ -50,6 +50,10 @@ fn main() {
     devices.push(qkdev::QKDev::new(""));*/
     
     let _e = editor::EditorWindow::new();
+    
+    /*println!("{:?}", pref);
+    devices[0].set_symbol(&mut pref, 0, "test");
+    println!("{:?}", pref);*/
     
     for mut qk in &mut devices {
         qk.stop();

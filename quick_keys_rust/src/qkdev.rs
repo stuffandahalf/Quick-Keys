@@ -1,4 +1,6 @@
 use quickkeys::QuickKeys;
+use profile::Profile;
+use preferences::Preferences;
 use std::thread;
 use std::sync::mpsc::{channel, Sender, Receiver};
 use std::mem;
@@ -6,6 +8,7 @@ use std::mem;
 #[derive(Debug)]
 pub struct QKDev {
     device: QuickKeys,
+    profile: Profile,
     handle: Option<thread::JoinHandle<()>>,
     tx: Option<Sender<bool>>,
 }
@@ -15,6 +18,7 @@ impl QKDev {
         let (tx, rx) = channel::<bool>();
         let mut qk = QKDev {
             device: QuickKeys::new_on(port),
+            profile: Profile::new(),
             handle: None,
             tx: Some(tx),
         };
@@ -25,6 +29,7 @@ impl QKDev {
     pub fn new_from(device: &QuickKeys) -> QKDev {
         return QKDev {
             device: device.clone(),
+            profile: Profile::new(),
             handle: None,
             tx: None,
         };
@@ -32,8 +37,9 @@ impl QKDev {
     
     fn init(&mut self, rx: Receiver<bool>) {
         let local_dev = self.device().clone();
+        let local_prof = self.profile().clone();
         self.handle = Some(thread::spawn(move || {
-            local_dev.start(rx);
+            local_dev.start(rx, local_prof);
         }));
     }
     
@@ -59,6 +65,18 @@ impl QKDev {
     
     pub fn device(&self) -> &QuickKeys {
         return &self.device;
+    }
+    
+    pub fn set_symbol(&mut self, pref: &mut Preferences, index: usize, sym: &str) {
+        self.stop();
+        if let Some(mut edit_prof) = pref.find_profile(self.profile().name()) {
+            edit_prof.set_symbol(index, sym);
+        }
+        self.start();
+    }
+    
+    pub fn profile(&self) -> &Profile {
+        return &self.profile;
     }
     
     /*fn move_device(self) -> QuickKeys {

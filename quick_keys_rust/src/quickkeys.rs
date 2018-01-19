@@ -9,26 +9,26 @@ use profile::Profile;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QuickKeys {
-    profile: Profile,
+    //profile: Profile,
     port: String,
 }
 
 impl QuickKeys {
     pub fn new() -> QuickKeys {
         return QuickKeys {
-            profile: Profile::new(),
+            //profile: Profile::new(),
             port: String::new(),
         }
     }
     
     pub fn new_on(port_name: &str) -> QuickKeys {
         return QuickKeys {
-            profile: Profile::new(),
+            //profile: Profile::new(),
             port: String::from(port_name),
         };
     }
     
-    pub fn start(&self, rx: Receiver<bool>) {
+    pub fn start(&self, rx: Receiver<bool>, profile: Profile) {
         let mut exit = false;
         let mut enigo = Enigo::new();
         let mut serial_buf: Vec<u8> = vec![0; 4];
@@ -37,7 +37,8 @@ impl QuickKeys {
             while self.port_exists() && !exit {
                 if let Ok(_bytes) = port.read(serial_buf.as_mut_slice()) {
                     let i: usize = serial_buf[0] as usize - 49;
-                    let sym = self.profile().get_symbol(i);
+                    //let sym = self.profile().get_symbol(i);
+                    let sym = profile.get_symbol(i);
                     enigo.key_sequence(sym);
                 }
                 if let Ok(val) = rx.try_recv() {
@@ -71,7 +72,7 @@ impl QuickKeys {
         return &*self.port;
     }
     
-    pub fn profile(&self) -> &Profile {
+    /*pub fn profile(&self) -> &Profile {
         return &self.profile;
     }
     
@@ -81,6 +82,6 @@ impl QuickKeys {
     
     pub fn set_symbol(&mut self, index: usize, symbol: &str) {
         self.profile.set_symbol(index, symbol);
-    }
+    }*/
 }
 
