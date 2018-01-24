@@ -1,3 +1,5 @@
+#[macro_use]
+extern crate lazy_static;
 extern crate serialport;
 extern crate enigo;
 extern crate gtk;
@@ -15,17 +17,23 @@ mod qkdev;
 //mod qklib;
 mod editor;
 
+use std::sync::Mutex;
+
 const KEYS: usize = 6;
 //const PREF_FILE: &str = "../resources/QuickKeys.pref";
 const PREF_FILE: &str = "/home/ubuntu/Desktop/github_projects/QuickKeys.pref";
 
+lazy_static! {
+    static ref PREFS: Mutex<preferences::Preferences> = Mutex::new(preferences::Preferences::new());
+}
+
 fn main() {
     //let mut profiles: Vec<profile::Profile> = Vec::new();
     //profiles.push(profile::Profile::new());
-    let mut pref = preferences::Preferences::new();
+    //let mut pref = preferences::Preferences::new();
     
     //let mut devices: Vec<qkdev::QKDev> = Vec::new();
-    let mut devices: Vec<qkdev::QKDev> = pref.devices().iter().map(|d| qkdev::QKDev::new_from(d)).collect();
+    let mut devices: Vec<qkdev::QKDev> = PREFS.lock().unwrap().devices().iter().map(|d| qkdev::QKDev::new_from(d)).collect();
     println!("DEVICES FROM PREFS: {:?}", devices);
     
     if let Ok(ports) = serialport::available_ports() {
@@ -59,6 +67,8 @@ fn main() {
         qk.stop();
     }
     
-    pref.reset_devices(&mut devices);
-    pref.write_prefs();
+    PREFS.lock().unwrap().reset_devices(&mut devices);
+    PREFS.lock().unwrap().write_prefs();
+    
+    //println!("{:?}", PREFS.profiles());
 }

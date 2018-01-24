@@ -55,7 +55,7 @@ impl Preferences {
             Ok(mut file) => {
                 let json_str = serde_json::to_string(self).unwrap();
                 let _ = file.write_all(&*json_str.as_bytes());
-                println!("Preference saved");
+                println!("Preferences saved");
             },
             Err(err) => println!("{:?}", err),
         }
