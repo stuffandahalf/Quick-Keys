@@ -23,6 +23,9 @@ const KEYS: usize = 6;
 //const PREF_FILE: &str = "../resources/QuickKeys.pref";
 const PREF_FILE: &str = "/home/ubuntu/Desktop/github_projects/QuickKeys.pref";
 
+/*#[cfg(target_os = "linux")]
+const PREF_FILE: &str = "~/QuickKeys.pref"; */
+
 lazy_static! {
     static ref PREFS: Mutex<preferences::Preferences> = Mutex::new(preferences::Preferences::new());
 }
@@ -33,7 +36,7 @@ fn main() {
     //let mut pref = preferences::Preferences::new();
     
     //let mut devices: Vec<qkdev::QKDev> = Vec::new();
-    let mut devices: Vec<qkdev::QKDev> = PREFS.lock().unwrap().devices().iter().map(|d| qkdev::QKDev::new_from(d)).collect();
+    /*let mut devices: Vec<qkdev::QKDev> = PREFS.lock().unwrap().devices().iter().map(|d| qkdev::QKDev::new_from(d)).collect();
     println!("DEVICES FROM PREFS: {:?}", devices);
     
     if let Ok(ports) = serialport::available_ports() {
@@ -70,5 +73,10 @@ fn main() {
     PREFS.lock().unwrap().reset_devices(&mut devices);
     PREFS.lock().unwrap().write_prefs();
     
-    //println!("{:?}", PREFS.profiles());
+    //println!("{:?}", PREFS.profiles());*/
+    println!("{:?}", PREFS.lock().unwrap().profiles());
+    let mut qk = qkdev::QKDev::new("/dev/ttyUSB0");
+    qk.set_symbol(0, "test");
+    println!("{:?}", qk);
+    println!("{:?}", PREFS.lock().unwrap().profiles());
 }

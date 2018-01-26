@@ -1,3 +1,5 @@
+use PREFS;
+
 use quickkeys::QuickKeys;
 use profile::Profile;
 use preferences::Preferences;
@@ -67,16 +69,40 @@ impl QKDev {
         return &self.device;
     }
     
-    pub fn set_symbol(&mut self, pref: &mut Preferences, index: usize, sym: &str) {
-        self.stop();
+    pub fn set_symbol(&mut self, index: usize, symbol: &str) {
+        /*self.stop();
         if let Some(mut edit_prof) = pref.find_profile(self.profile().name()) {
             edit_prof.set_symbol(index, sym);
         }
-        self.start();
+        self.start();*/
+        match PREFS.try_lock() {
+            Ok(mut prefs) => {
+                self.stop();
+                //change this to move out value
+                match prefs.find_profile(self.profile().name()) {
+                    Some(mut local_profile) => {
+                        local_profile.set_symbol(index, symbol);
+                        self.set_profile(local_profile.clone());
+                        prefs.add_profile(&local_profile);
+                    },
+                    None => {
+                        //edit local and add to PREFS
+                        self.profile.set_symbol(index, symbol);
+                        prefs.add_profile(self.profile());
+                    },
+                }
+                self.start();
+            }
+            Err(err) => println!("{}", err),
+        }
     }
     
     pub fn profile(&self) -> &Profile {
         return &self.profile;
+    }
+    
+    pub fn set_profile(&mut self, new_profile: Profile) {
+        self.profile = new_profile;
     }
     
     /*fn move_device(self) -> QuickKeys {

@@ -61,10 +61,17 @@ impl Preferences {
         }
     }
     
-    pub fn find_profile(&self, name: String) -> Option<Profile> {
+    pub fn add_profile(&mut self, new_profile: &Profile) {
+        self.profiles.push(new_profile.clone());
+    }
+    
+    //pub fn find_profile(&mut self, name: String) -> Option<&mut Profile> {
+    pub fn find_profile(&mut self, name: String) -> Option<Profile> {
         for i in 0..self.profiles.len() {
             if self.profiles[i].name() == name {
-                return Some(self.profiles[i].clone());
+                println!("matched");
+                /*return Some(&mut self.profiles[i]);*/
+                return Some(self.profiles.swap_remove(i));
             }
         }
         return None;
