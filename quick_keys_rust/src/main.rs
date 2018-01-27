@@ -1,5 +1,7 @@
 #[macro_use]
 extern crate lazy_static;
+#[macro_use]
+extern crate text_io;
 extern crate serialport;
 extern crate enigo;
 extern crate gtk;
@@ -15,7 +17,8 @@ mod quickkeys;
 mod preferences;
 mod qkdev;
 //mod qklib;
-mod editor;
+//mod editor;
+mod cli;
 
 use std::sync::Mutex;
 
@@ -74,9 +77,12 @@ fn main() {
     PREFS.lock().unwrap().write_prefs();
     
     //println!("{:?}", PREFS.profiles());*/
-    println!("{:?}", PREFS.lock().unwrap().profiles());
+    
+    /*println!("{:?}", PREFS.lock().unwrap().profiles());
     let mut qk = qkdev::QKDev::new("/dev/ttyUSB0");
     qk.set_symbol(0, "test");
     println!("{:?}", qk);
-    println!("{:?}", PREFS.lock().unwrap().profiles());
+    println!("{:?}", PREFS.lock().unwrap().profiles());*/
+    
+    cli::cli();
 }
