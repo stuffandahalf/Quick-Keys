@@ -27,7 +27,7 @@ const KEYS: usize = 6;
 const PREF_FILE: &str = "/home/ubuntu/Desktop/github_projects/QuickKeys.pref";
 
 /*#[cfg(target_os = "linux")]
-const PREF_FILE: &str = "~/QuickKeys.pref"; */
+const PREF_FILE: &str = "~/.QuickKeys.pref"; */
 
 lazy_static! {
     static ref PREFS: Mutex<preferences::Preferences> = Mutex::new(preferences::Preferences::new());
@@ -83,6 +83,6 @@ fn main() {
     qk.set_symbol(0, "test");
     println!("{:?}", qk);
     println!("{:?}", PREFS.lock().unwrap().profiles());*/
-    
+    //println!("{:?}", PREFS.lock().unwrap());
     cli::cli();
 }
