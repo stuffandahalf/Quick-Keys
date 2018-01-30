@@ -2,8 +2,17 @@ use PREFS;
 use qkdev::QKDev;
 
 pub fn cli() {
-    let mut devices: Vec<QKDev> = PREFS.lock().unwrap().devices().clone().iter().map(|d| QKDev::new_from(d)).collect();
+    let mut devices: Vec<QKDev> = PREFS.lock()
+                                       .unwrap()
+                                       .devices()
+                                       .clone()
+                                       .iter()
+                                       .map(|d| QKDev::new_from(d))
+                                       .collect();
     main_menu(&mut devices);
+    for mut qk in &mut devices {
+        qk.stop();
+    }
 }
 
 fn print_main_menu() {
