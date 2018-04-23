@@ -24,7 +24,7 @@ use std::sync::Mutex;
 
 const KEYS: usize = 6;
 //const PREF_FILE: &str = "../resources/QuickKeys.pref";
-const PREF_FILE: &str = "/home/ubuntu/Desktop/github_projects/QuickKeys.pref";
+const PREF_FILE: &str = "/home/ubuntu/Desktop/QuickKeys.pref";
 
 /*#[cfg(target_os = "linux")]
 const PREF_FILE: &str = "~/.QuickKeys.pref"; */
