@@ -1,0 +1,10 @@
+/home/ubuntu/Desktop/git/Quick-Keys/quick_keys_rust/target/debug/deps/libserde_derive_internals-07129654c8085136.rlib: /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/lib.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/ast.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/attr.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/ctxt.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/case.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/check.rs
+
+/home/ubuntu/Desktop/git/Quick-Keys/quick_keys_rust/target/debug/deps/serde_derive_internals-07129654c8085136.d: /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/lib.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/ast.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/attr.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/ctxt.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/case.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/check.rs
+
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/lib.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/ast.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/attr.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/ctxt.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/case.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive_internals-0.19.0/src/check.rs:

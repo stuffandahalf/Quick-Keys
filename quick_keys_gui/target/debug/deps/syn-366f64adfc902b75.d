@@ -1,0 +1,17 @@
+/home/ubuntu/Desktop/git/Quick-Keys/quick_keys_gui/target/debug/deps/libsyn-366f64adfc902b75.rlib: /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/lib.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/attr.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/constant.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/data.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/escape.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/generics.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/ident.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/lit.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/mac.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/derive.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/op.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/ty.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/visit.rs
+
+/home/ubuntu/Desktop/git/Quick-Keys/quick_keys_gui/target/debug/deps/syn-366f64adfc902b75.d: /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/lib.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/attr.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/constant.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/data.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/escape.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/generics.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/ident.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/lit.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/mac.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/derive.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/op.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/ty.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/visit.rs
+
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/lib.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/attr.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/constant.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/data.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/escape.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/generics.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/ident.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/lit.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/mac.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/derive.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/op.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/ty.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/syn-0.11.11/src/visit.rs:

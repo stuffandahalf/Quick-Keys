@@ -1,0 +1,8 @@
+[package]
+name = "quick_keys_gui"
+version = "0.1.0"
+authors = ["Gregory Norton <gregory.norton@me.com"]
+
+[dependencies]
+gtk = "0.3.0"
+quick_keys_core = { path = "../quick_keys_core" }

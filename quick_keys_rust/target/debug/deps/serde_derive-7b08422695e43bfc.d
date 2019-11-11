@@ -1,0 +1,9 @@
+/home/ubuntu/Desktop/git/Quick-Keys/quick_keys_rust/target/debug/deps/libserde_derive-7b08422695e43bfc.so: /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/lib.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/bound.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/fragment.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/ser.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/de.rs
+
+/home/ubuntu/Desktop/git/Quick-Keys/quick_keys_rust/target/debug/deps/serde_derive-7b08422695e43bfc.d: /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/lib.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/bound.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/fragment.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/ser.rs /home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/de.rs
+
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/lib.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/bound.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/fragment.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/ser.rs:
+/home/ubuntu/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.27/src/de.rs:
